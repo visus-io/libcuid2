@@ -1,0 +1,31 @@
+# Build directories (OS and architecture specific)
+build-*/
+cmake-build-*/
+
+# vcpkg installed packages
+vcpkg_installed/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+CTestTestfile.cmake
+compile_commands.json
+
+# Build artifacts
+*.a
+*.so
+*.dylib
+*.dll
+*.exe
+
+# IDE directories
+.idea/
+.vscode/
+.vs/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store

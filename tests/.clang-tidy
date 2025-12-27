@@ -1,0 +1,71 @@
+# ClangTidy configuration for test files
+# Inherits from root .clang-tidy but relaxes rules appropriate for tests
+
+Checks: >
+  -*,
+  bugprone-*,
+  clang-analyzer-*,
+  cppcoreguidelines-*,
+  modernize-*,
+  performance-*,
+  readability-*,
+  misc-*,
+  concurrency-*,
+  portability-*,
+  cert-*,
+  -cert-err58-cpp,
+  -misc-include-cleaner,
+  -modernize-use-trailing-return-type,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-avoid-do-while,
+  -readability-else-after-return,
+  -readability-implicit-bool-conversion,
+  -misc-no-recursion,
+  -misc-non-private-member-variables-in-classes,
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+  -llvmlibc-*,
+  -google-readability-namespace-comments,
+  -llvm-namespace-comment,
+  -altera-*,
+  -fuchsia-*,
+  -hicpp-signed-bitwise,
+  -cert-dcl21-cpp,
+  -readability-magic-numbers,
+  -cppcoreguidelines-avoid-magic-numbers,
+  -readability-function-size,
+  -readability-function-cognitive-complexity,
+  -cppcoreguidelines-avoid-non-const-global-variables,
+  -cppcoreguidelines-owning-memory,
+  -cert-err33-c,
+  -bugprone-easily-swappable-parameters,
+  -readability-identifier-naming,
+  -cppcoreguidelines-init-variables,
+  -modernize-use-auto
+
+CheckOptions:
+  # Performance
+  - key:             performance-move-const-arg.CheckTriviallyCopyableMove
+    value:           true
+  - key:             performance-unnecessary-value-param.AllowedTypes
+    value:           ''
+
+  # Modernization
+  - key:             modernize-use-auto.MinTypeNameLength
+    value:           5
+  - key:             modernize-use-nullptr.NullMacros
+    value:           'NULL'
+
+  # Code guidelines
+  - key:             cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor
+    value:           true
+  - key:             cppcoreguidelines-avoid-c-arrays.AllowStringArrays
+    value:           true
+
+  # Concurrency checks
+  - key:             concurrency-mt-unsafe.FunctionSet
+    value:           any
+
+InheritParentConfig: false
+FormatStyle: file
+UseColor: true

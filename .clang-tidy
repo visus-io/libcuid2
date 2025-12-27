@@ -1,0 +1,106 @@
+# ClangTidy configuration for libcuid2
+# Enforces modern C++ best practices and includes explicit header requirements
+
+Checks: >
+  -*,
+  bugprone-*,
+  clang-analyzer-*,
+  cppcoreguidelines-*,
+  modernize-*,
+  performance-*,
+  readability-*,
+  misc-*,
+  concurrency-*,
+  portability-*,
+  cert-*,
+  -cert-err58-cpp,
+  -misc-include-cleaner,
+  -modernize-use-trailing-return-type,
+  -cppcoreguidelines-pro-type-reinterpret-cast,
+  -cppcoreguidelines-pro-bounds-pointer-arithmetic,
+  -cppcoreguidelines-avoid-do-while,
+  -readability-else-after-return,
+  -readability-implicit-bool-conversion,
+  -misc-no-recursion,
+  -misc-non-private-member-variables-in-classes,
+  -cppcoreguidelines-non-private-member-variables-in-classes,
+  -llvmlibc-*,
+  -google-readability-namespace-comments,
+  -llvm-namespace-comment,
+  -altera-*,
+  -fuchsia-*,
+  -hicpp-signed-bitwise,
+  -cert-dcl21-cpp
+
+# Check options
+CheckOptions:
+  # Naming conventions
+  - key:             readability-identifier-naming.NamespaceCase
+    value:           lower_case
+  - key:             readability-identifier-naming.ClassCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.StructCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.FunctionCase
+    value:           lower_case
+  - key:             readability-identifier-naming.VariableCase
+    value:           lower_case
+  - key:             readability-identifier-naming.MemberCase
+    value:           lower_case
+  - key:             readability-identifier-naming.MemberSuffix
+    value:           '_'
+  - key:             readability-identifier-naming.ConstantCase
+    value:           UPPER_CASE
+  - key:             readability-identifier-naming.EnumConstantCase
+    value:           CamelCase
+  - key:             readability-identifier-naming.GlobalConstantCase
+    value:           UPPER_CASE
+  - key:             readability-identifier-naming.StaticConstantCase
+    value:           UPPER_CASE
+
+  # Function size limits
+  - key:             readability-function-cognitive-complexity.Threshold
+    value:           25
+  - key:             readability-function-size.LineThreshold
+    value:           80
+  - key:             readability-function-size.StatementThreshold
+    value:           40
+
+  # Performance
+  - key:             performance-move-const-arg.CheckTriviallyCopyableMove
+    value:           true
+  - key:             performance-unnecessary-value-param.AllowedTypes
+    value:           ''
+
+  # Modernization
+  - key:             modernize-use-auto.MinTypeNameLength
+    value:           5
+  - key:             modernize-use-nullptr.NullMacros
+    value:           'NULL'
+
+  # Code guidelines
+  - key:             cppcoreguidelines-special-member-functions.AllowSoleDefaultDtor
+    value:           true
+  - key:             cppcoreguidelines-avoid-c-arrays.AllowStringArrays
+    value:           true
+
+  # Test-specific relaxations
+  # Allow longer functions in tests (test cases can be lengthy)
+  - key:             readability-function-size.LineThreshold
+    value:           150
+  - key:             readability-function-size.StatementThreshold
+    value:           100
+
+  # Concurrency checks
+  - key:             concurrency-mt-unsafe.FunctionSet
+    value:           any
+
+# Header filter - check all project files (headers and implementation)
+HeaderFilterRegex: '(include/cuid2/.*\.h$|src/.*\.(cpp|h)$|tests/.*\.(cpp|h)$)'
+
+# Format style (should match .clang-format)
+FormatStyle: file
+
+# Analysis options
+WarningsAsErrors: ''
+UseColor: true

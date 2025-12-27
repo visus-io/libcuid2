@@ -1,0 +1,905 @@
+{
+  "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 4,
+    "minor": 0,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "default",
+      "hidden": true,
+      "description": "Default base configuration using vcpkg",
+      "generator": "Ninja",
+      "cacheVariables": {
+        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+        "VCPKG_OVERLAY_TRIPLETS": "${sourceDir}/triplets"
+      }
+    },
+    {
+      "name": "macos-arm64-debug",
+      "inherits": "default",
+      "displayName": "macOS ARM64 Debug",
+      "description": "Debug build for macOS ARM64 (Apple Silicon)",
+      "binaryDir": "${sourceDir}/build-macos-arm64-debug",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "architecture": {
+        "value": "arm64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "arm64-osx-dynamic"
+      }
+    },
+    {
+      "name": "macos-arm64-release",
+      "inherits": "default",
+      "displayName": "macOS ARM64 Release",
+      "description": "Release build for macOS ARM64 (Apple Silicon)",
+      "binaryDir": "${sourceDir}/build-macos-arm64-release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "architecture": {
+        "value": "arm64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "arm64-osx-dynamic"
+      }
+    },
+    {
+      "name": "macos-x64-debug",
+      "inherits": "default",
+      "displayName": "macOS x64 Debug",
+      "description": "Debug build for macOS x64 (Intel)",
+      "binaryDir": "${sourceDir}/build-macos-x64-debug",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "architecture": {
+        "value": "x86_64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "x64-osx-dynamic"
+      }
+    },
+    {
+      "name": "macos-x64-release",
+      "inherits": "default",
+      "displayName": "macOS x64 Release",
+      "description": "Release build for macOS x64 (Intel)",
+      "binaryDir": "${sourceDir}/build-macos-x64-release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Darwin"
+      },
+      "architecture": {
+        "value": "x86_64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "x64-osx-dynamic"
+      }
+    },
+    {
+      "name": "linux-x64-debug",
+      "inherits": "default",
+      "displayName": "Linux x64 Debug",
+      "description": "Debug build for Linux x64",
+      "binaryDir": "${sourceDir}/build-linux-x64-debug",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "x64-linux-dynamic"
+      }
+    },
+    {
+      "name": "linux-x64-release",
+      "inherits": "default",
+      "displayName": "Linux x64 Release",
+      "description": "Release build for Linux x64",
+      "binaryDir": "${sourceDir}/build-linux-x64-release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "x64-linux-dynamic"
+      }
+    },
+    {
+      "name": "linux-arm64-debug",
+      "inherits": "default",
+      "displayName": "Linux ARM64 Debug",
+      "description": "Debug build for Linux ARM64",
+      "binaryDir": "${sourceDir}/build-linux-arm64-debug",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "architecture": {
+        "value": "aarch64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "arm64-linux-dynamic"
+      }
+    },
+    {
+      "name": "linux-arm64-release",
+      "inherits": "default",
+      "displayName": "Linux ARM64 Release",
+      "description": "Release build for Linux ARM64",
+      "binaryDir": "${sourceDir}/build-linux-arm64-release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Linux"
+      },
+      "architecture": {
+        "value": "aarch64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "arm64-linux-dynamic"
+      }
+    },
+    {
+      "name": "windows-x64-debug",
+      "inherits": "default",
+      "displayName": "Windows x64 Debug",
+      "description": "Debug build for Windows x64",
+      "binaryDir": "${sourceDir}/build-windows-x64-debug",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "x64-windows-dynamic"
+      }
+    },
+    {
+      "name": "windows-x64-release",
+      "inherits": "default",
+      "displayName": "Windows x64 Release",
+      "description": "Release build for Windows x64",
+      "binaryDir": "${sourceDir}/build-windows-x64-release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "x64-windows-dynamic"
+      }
+    },
+    {
+      "name": "windows-arm64-debug",
+      "inherits": "default",
+      "displayName": "Windows ARM64 Debug",
+      "description": "Debug build for Windows ARM64",
+      "binaryDir": "${sourceDir}/build-windows-arm64-debug",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "architecture": {
+        "value": "ARM64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "arm64-windows-dynamic"
+      }
+    },
+    {
+      "name": "windows-arm64-release",
+      "inherits": "default",
+      "displayName": "Windows ARM64 Release",
+      "description": "Release build for Windows ARM64",
+      "binaryDir": "${sourceDir}/build-windows-arm64-release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "Windows"
+      },
+      "architecture": {
+        "value": "ARM64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "arm64-windows-dynamic"
+      }
+    },
+    {
+      "name": "freebsd-x64-debug",
+      "inherits": "default",
+      "displayName": "FreeBSD x64 Debug",
+      "description": "Debug build for FreeBSD x64",
+      "binaryDir": "${sourceDir}/build-freebsd-x64-debug",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "FreeBSD"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "freebsd-x64-release",
+      "inherits": "default",
+      "displayName": "FreeBSD x64 Release",
+      "description": "Release build for FreeBSD x64",
+      "binaryDir": "${sourceDir}/build-freebsd-x64-release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "FreeBSD"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "freebsd-arm64-debug",
+      "inherits": "default",
+      "displayName": "FreeBSD ARM64 Debug",
+      "description": "Debug build for FreeBSD ARM64",
+      "binaryDir": "${sourceDir}/build-freebsd-arm64-debug",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "FreeBSD"
+      },
+      "architecture": {
+        "value": "aarch64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "freebsd-arm64-release",
+      "inherits": "default",
+      "displayName": "FreeBSD ARM64 Release",
+      "description": "Release build for FreeBSD ARM64",
+      "binaryDir": "${sourceDir}/build-freebsd-arm64-release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "FreeBSD"
+      },
+      "architecture": {
+        "value": "aarch64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "openbsd-x64-debug",
+      "inherits": "default",
+      "displayName": "OpenBSD x64 Debug",
+      "description": "Debug build for OpenBSD x64",
+      "binaryDir": "${sourceDir}/build-openbsd-x64-debug",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "OpenBSD"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "openbsd-x64-release",
+      "inherits": "default",
+      "displayName": "OpenBSD x64 Release",
+      "description": "Release build for OpenBSD x64",
+      "binaryDir": "${sourceDir}/build-openbsd-x64-release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "OpenBSD"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "openbsd-arm64-debug",
+      "inherits": "default",
+      "displayName": "OpenBSD ARM64 Debug",
+      "description": "Debug build for OpenBSD ARM64",
+      "binaryDir": "${sourceDir}/build-openbsd-arm64-debug",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "OpenBSD"
+      },
+      "architecture": {
+        "value": "aarch64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "openbsd-arm64-release",
+      "inherits": "default",
+      "displayName": "OpenBSD ARM64 Release",
+      "description": "Release build for OpenBSD ARM64",
+      "binaryDir": "${sourceDir}/build-openbsd-arm64-release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "OpenBSD"
+      },
+      "architecture": {
+        "value": "aarch64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "netbsd-x64-debug",
+      "inherits": "default",
+      "displayName": "NetBSD x64 Debug",
+      "description": "Debug build for NetBSD x64",
+      "binaryDir": "${sourceDir}/build-netbsd-x64-debug",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "NetBSD"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "netbsd-x64-release",
+      "inherits": "default",
+      "displayName": "NetBSD x64 Release",
+      "description": "Release build for NetBSD x64",
+      "binaryDir": "${sourceDir}/build-netbsd-x64-release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "NetBSD"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "netbsd-arm64-debug",
+      "inherits": "default",
+      "displayName": "NetBSD ARM64 Debug",
+      "description": "Debug build for NetBSD ARM64",
+      "binaryDir": "${sourceDir}/build-netbsd-arm64-debug",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "NetBSD"
+      },
+      "architecture": {
+        "value": "aarch64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    },
+    {
+      "name": "netbsd-arm64-release",
+      "inherits": "default",
+      "displayName": "NetBSD ARM64 Release",
+      "description": "Release build for NetBSD ARM64",
+      "binaryDir": "${sourceDir}/build-netbsd-arm64-release",
+      "condition": {
+        "type": "equals",
+        "lhs": "${hostSystemName}",
+        "rhs": "NetBSD"
+      },
+      "architecture": {
+        "value": "aarch64",
+        "strategy": "external"
+      },
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "macos-arm64-debug",
+      "displayName": "Build macOS ARM64 Debug",
+      "configurePreset": "macos-arm64-debug",
+      "description": "Build macOS ARM64 debug configuration"
+    },
+    {
+      "name": "macos-arm64-release",
+      "displayName": "Build macOS ARM64 Release",
+      "configurePreset": "macos-arm64-release",
+      "description": "Build macOS ARM64 release configuration"
+    },
+    {
+      "name": "macos-x64-debug",
+      "displayName": "Build macOS x64 Debug",
+      "configurePreset": "macos-x64-debug",
+      "description": "Build macOS x64 debug configuration"
+    },
+    {
+      "name": "macos-x64-release",
+      "displayName": "Build macOS x64 Release",
+      "configurePreset": "macos-x64-release",
+      "description": "Build macOS x64 release configuration"
+    },
+    {
+      "name": "linux-x64-debug",
+      "displayName": "Build Linux x64 Debug",
+      "configurePreset": "linux-x64-debug",
+      "description": "Build Linux x64 debug configuration"
+    },
+    {
+      "name": "linux-x64-release",
+      "displayName": "Build Linux x64 Release",
+      "configurePreset": "linux-x64-release",
+      "description": "Build Linux x64 release configuration"
+    },
+    {
+      "name": "linux-arm64-debug",
+      "displayName": "Build Linux ARM64 Debug",
+      "configurePreset": "linux-arm64-debug",
+      "description": "Build Linux ARM64 debug configuration"
+    },
+    {
+      "name": "linux-arm64-release",
+      "displayName": "Build Linux ARM64 Release",
+      "configurePreset": "linux-arm64-release",
+      "description": "Build Linux ARM64 release configuration"
+    },
+    {
+      "name": "windows-x64-debug",
+      "displayName": "Build Windows x64 Debug",
+      "configurePreset": "windows-x64-debug",
+      "description": "Build Windows x64 debug configuration"
+    },
+    {
+      "name": "windows-x64-release",
+      "displayName": "Build Windows x64 Release",
+      "configurePreset": "windows-x64-release",
+      "description": "Build Windows x64 release configuration"
+    },
+    {
+      "name": "windows-arm64-debug",
+      "displayName": "Build Windows ARM64 Debug",
+      "configurePreset": "windows-arm64-debug",
+      "description": "Build Windows ARM64 debug configuration"
+    },
+    {
+      "name": "windows-arm64-release",
+      "displayName": "Build Windows ARM64 Release",
+      "configurePreset": "windows-arm64-release",
+      "description": "Build Windows ARM64 release configuration"
+    },
+    {
+      "name": "freebsd-x64-debug",
+      "displayName": "Build FreeBSD x64 Debug",
+      "configurePreset": "freebsd-x64-debug",
+      "description": "Build FreeBSD x64 debug configuration"
+    },
+    {
+      "name": "freebsd-x64-release",
+      "displayName": "Build FreeBSD x64 Release",
+      "configurePreset": "freebsd-x64-release",
+      "description": "Build FreeBSD x64 release configuration"
+    },
+    {
+      "name": "freebsd-arm64-debug",
+      "displayName": "Build FreeBSD ARM64 Debug",
+      "configurePreset": "freebsd-arm64-debug",
+      "description": "Build FreeBSD ARM64 debug configuration"
+    },
+    {
+      "name": "freebsd-arm64-release",
+      "displayName": "Build FreeBSD ARM64 Release",
+      "configurePreset": "freebsd-arm64-release",
+      "description": "Build FreeBSD ARM64 release configuration"
+    },
+    {
+      "name": "openbsd-x64-debug",
+      "displayName": "Build OpenBSD x64 Debug",
+      "configurePreset": "openbsd-x64-debug",
+      "description": "Build OpenBSD x64 debug configuration"
+    },
+    {
+      "name": "openbsd-x64-release",
+      "displayName": "Build OpenBSD x64 Release",
+      "configurePreset": "openbsd-x64-release",
+      "description": "Build OpenBSD x64 release configuration"
+    },
+    {
+      "name": "openbsd-arm64-debug",
+      "displayName": "Build OpenBSD ARM64 Debug",
+      "configurePreset": "openbsd-arm64-debug",
+      "description": "Build OpenBSD ARM64 debug configuration"
+    },
+    {
+      "name": "openbsd-arm64-release",
+      "displayName": "Build OpenBSD ARM64 Release",
+      "configurePreset": "openbsd-arm64-release",
+      "description": "Build OpenBSD ARM64 release configuration"
+    },
+    {
+      "name": "netbsd-x64-debug",
+      "displayName": "Build NetBSD x64 Debug",
+      "configurePreset": "netbsd-x64-debug",
+      "description": "Build NetBSD x64 debug configuration"
+    },
+    {
+      "name": "netbsd-x64-release",
+      "displayName": "Build NetBSD x64 Release",
+      "configurePreset": "netbsd-x64-release",
+      "description": "Build NetBSD x64 release configuration"
+    },
+    {
+      "name": "netbsd-arm64-debug",
+      "displayName": "Build NetBSD ARM64 Debug",
+      "configurePreset": "netbsd-arm64-debug",
+      "description": "Build NetBSD ARM64 debug configuration"
+    },
+    {
+      "name": "netbsd-arm64-release",
+      "displayName": "Build NetBSD ARM64 Release",
+      "configurePreset": "netbsd-arm64-release",
+      "description": "Build NetBSD ARM64 release configuration"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "macos-arm64-debug",
+      "displayName": "Test macOS ARM64 Debug",
+      "configurePreset": "macos-arm64-debug",
+      "description": "Run tests on macOS ARM64 debug build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "macos-arm64-release",
+      "displayName": "Test macOS ARM64 Release",
+      "configurePreset": "macos-arm64-release",
+      "description": "Run tests on macOS ARM64 release build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "linux-x64-debug",
+      "displayName": "Test Linux x64 Debug",
+      "configurePreset": "linux-x64-debug",
+      "description": "Run tests on Linux x64 debug build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "linux-x64-release",
+      "displayName": "Test Linux x64 Release",
+      "configurePreset": "linux-x64-release",
+      "description": "Run tests on Linux x64 release build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "linux-arm64-debug",
+      "displayName": "Test Linux ARM64 Debug",
+      "configurePreset": "linux-arm64-debug",
+      "description": "Run tests on Linux ARM64 debug build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "linux-arm64-release",
+      "displayName": "Test Linux ARM64 Release",
+      "configurePreset": "linux-arm64-release",
+      "description": "Run tests on Linux ARM64 release build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "windows-x64-debug",
+      "displayName": "Test Windows x64 Debug",
+      "configurePreset": "windows-x64-debug",
+      "description": "Run tests on Windows x64 debug build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "windows-x64-release",
+      "displayName": "Test Windows x64 Release",
+      "configurePreset": "windows-x64-release",
+      "description": "Run tests on Windows x64 release build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "windows-arm64-debug",
+      "displayName": "Test Windows ARM64 Debug",
+      "configurePreset": "windows-arm64-debug",
+      "description": "Run tests on Windows ARM64 debug build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "windows-arm64-release",
+      "displayName": "Test Windows ARM64 Release",
+      "configurePreset": "windows-arm64-release",
+      "description": "Run tests on Windows ARM64 release build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "freebsd-x64-debug",
+      "displayName": "Test FreeBSD x64 Debug",
+      "configurePreset": "freebsd-x64-debug",
+      "description": "Run tests on FreeBSD x64 debug build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "freebsd-x64-release",
+      "displayName": "Test FreeBSD x64 Release",
+      "configurePreset": "freebsd-x64-release",
+      "description": "Run tests on FreeBSD x64 release build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "freebsd-arm64-debug",
+      "displayName": "Test FreeBSD ARM64 Debug",
+      "configurePreset": "freebsd-arm64-debug",
+      "description": "Run tests on FreeBSD ARM64 debug build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "freebsd-arm64-release",
+      "displayName": "Test FreeBSD ARM64 Release",
+      "configurePreset": "freebsd-arm64-release",
+      "description": "Run tests on FreeBSD ARM64 release build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "openbsd-x64-debug",
+      "displayName": "Test OpenBSD x64 Debug",
+      "configurePreset": "openbsd-x64-debug",
+      "description": "Run tests on OpenBSD x64 debug build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "openbsd-x64-release",
+      "displayName": "Test OpenBSD x64 Release",
+      "configurePreset": "openbsd-x64-release",
+      "description": "Run tests on OpenBSD x64 release build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "openbsd-arm64-debug",
+      "displayName": "Test OpenBSD ARM64 Debug",
+      "configurePreset": "openbsd-arm64-debug",
+      "description": "Run tests on OpenBSD ARM64 debug build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "openbsd-arm64-release",
+      "displayName": "Test OpenBSD ARM64 Release",
+      "configurePreset": "openbsd-arm64-release",
+      "description": "Run tests on OpenBSD ARM64 release build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "netbsd-x64-debug",
+      "displayName": "Test NetBSD x64 Debug",
+      "configurePreset": "netbsd-x64-debug",
+      "description": "Run tests on NetBSD x64 debug build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "netbsd-x64-release",
+      "displayName": "Test NetBSD x64 Release",
+      "configurePreset": "netbsd-x64-release",
+      "description": "Run tests on NetBSD x64 release build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "netbsd-arm64-debug",
+      "displayName": "Test NetBSD ARM64 Debug",
+      "configurePreset": "netbsd-arm64-debug",
+      "description": "Run tests on NetBSD ARM64 debug build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    },
+    {
+      "name": "netbsd-arm64-release",
+      "displayName": "Test NetBSD ARM64 Release",
+      "configurePreset": "netbsd-arm64-release",
+      "description": "Run tests on NetBSD ARM64 release build",
+      "output": {
+        "outputOnFailure": true,
+        "verbosity": "default"
+      },
+      "execution": {
+        "noTestsAction": "error",
+        "stopOnFailure": false
+      }
+    }
+  ]
+}

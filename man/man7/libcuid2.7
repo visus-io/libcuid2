@@ -1,0 +1,344 @@
+.TH LIBCUID2 7 "2025-12-20" "libcuid2" "Miscellaneous Information Manual"
+.SH NAME
+libcuid2 \- CUID2 identifier generation library overview
+.SH DESCRIPTION
+.B libcuid2
+is a C++ library that implements the CUID2 (Collision-resistant Unique IDentifier)
+algorithm. It generates collision-resistant, sortable unique identifiers suitable
+for use as database primary keys, distributed system identifiers, URL tokens, and
+anywhere unique identifiers are needed.
+.PP
+CUID2 identifiers combine cryptographic primitives with system-specific information
+to create identifiers that are:
+.IP \(bu 2
+.B Collision-resistant
+\- Extremely unlikely to collide even under high-frequency generation
+.IP \(bu
+.B Sortable
+\- Lexicographic ordering matches temporal ordering
+.IP \(bu
+.B URL-safe
+\- Contains only alphanumeric characters (base-36: 0-9, a-z)
+.IP \(bu
+.B Non-sequential
+\- Cannot be enumerated or predicted from previous values
+.IP \(bu
+.B Distributed-friendly
+\- Safe to generate on multiple machines without coordination
+.IP \(bu
+.B Configurable length
+\- Adjustable from 4 to 32 characters
+.SH ALGORITHM
+The CUID2 algorithm combines five sources of entropy and uniqueness:
+.SS "1. Timestamp"
+The current time in 100-nanosecond ticks since the Unix epoch (January 1, 1970).
+This provides:
+.IP \(bu 2
+Temporal ordering (sortability)
+.IP \(bu
+Uniqueness over time
+.IP \(bu
+High resolution (10,000,000 ticks per second)
+.PP
+Timestamps are serialized in little-endian format for cross-platform compatibility.
+.SS "2. Atomic Counter"
+A thread-safe 64-bit atomic counter that is:
+.IP \(bu 2
+Initialized with a cryptographically random seed multiplied by a prime number (476782367)
+.IP \(bu
+Incremented atomically on each call to
+.BR generate()
+.IP \(bu
+Provides uniqueness within the same timestamp
+.IP \(bu
+Safe for concurrent access from multiple threads
+.SS "3. System Fingerprint"
+A unique identifier for the system and process, computed from:
+.IP \(bu 2
+.B Hostname
+\- NetBIOS name (Windows) or POSIX hostname
+.IP \(bu
+.B Process ID
+\- Current process identifier, serialized as little-endian uint32
+.IP \(bu
+.B Environment variables
+\- All environment variables, sorted alphabetically by key
+.PP
+The fingerprint is computed once during library initialization and cached for the
+lifetime of the process. If hostname retrieval fails, a random hex string is used
+as fallback.
+.PP
+On Windows, environment variables are retrieved as UTF-16 and converted to UTF-8
+for consistent cross-platform fingerprints.
+.SS "4. Cryptographic Random Bytes"
+Random bytes generated using OpenSSL's RAND_bytes() CSPRNG. The number of random
+bytes equals the requested identifier length. This provides:
+.IP \(bu 2
+Collision resistance
+.IP \(bu
+Unpredictability
+.IP \(bu
+Non-sequential properties
+.SS "5. Random Prefix Character"
+A random lowercase letter (a-z) selected using cryptographic randomness. This ensures:
+.IP \(bu 2
+Identifiers always start with a letter
+.IP \(bu
+Valid identifiers in most programming languages
+.IP \(bu
+Compatibility with systems requiring alphabetic prefixes
+.SS "Hashing and Encoding"
+All five components are concatenated in a specific order:
+.IP 1. 3
+Timestamp (8 bytes, little-endian)
+.IP 2.
+Counter (8 bytes, little-endian)
+.IP 3.
+Fingerprint (variable length)
+.IP 4.
+Random bytes (variable length)
+.PP
+The concatenated data is hashed using NIST FIPS-202 SHA3-512, producing a 64-byte
+(512-bit) hash. This hash is then:
+.IP \(bu 2
+Interpreted as a big-endian unsigned integer
+.IP \(bu
+Converted to base-36 (digits 0-9, letters a-z)
+.IP \(bu
+Truncated to (length - 1) characters
+.IP \(bu
+Prefixed with the random letter
+.PP
+The final identifier has exact length
+.I max_length
+characters and consists only of lowercase alphanumeric characters.
+.SH ARCHITECTURE
+The library is organized into several components:
+.SS "Core Components"
+.TP
+.B cuid2.cpp
+Main identifier generation logic, coordinates all components
+.TP
+.B counter.cpp
+Thread-safe atomic counter with random initialization
+.TP
+.B fingerprint.cpp
+System fingerprint computation and caching
+.TP
+.B utils.cpp
+Base-36 encoding, timestamp generation, prefix generation
+.TP
+.B platform.cpp
+Cross-platform abstraction layer for system-specific operations
+.SS "Platform Abstraction"
+The library uses a unified single-file cross-platform approach with preprocessor
+directives to select between:
+.TP
+.B Windows (MSVC/MinGW)
+.IP \(bu 2
+GetComputerNameA() for hostname
+.IP \(bu
+GetCurrentProcessId() for process ID
+.IP \(bu
+GetEnvironmentStringsW() for environment variables with UTF-16 to UTF-8 conversion
+.TP
+.B POSIX (Linux/macOS/BSD)
+.IP \(bu 2
+gethostname() for hostname
+.IP \(bu
+getpid() for process ID
+.IP \(bu
+environ global variable for environment variables
+.PP
+Both implementations automatically sort environment variables alphabetically by key
+using std::map for deterministic fingerprints.
+.SS "Thread Safety"
+The library is designed for safe concurrent use:
+.TP
+.B Counter
+Uses std::atomic<int64_t> with fetch_add() for lock-free atomic operations
+.TP
+.B Fingerprint
+Computed once using C++11 static local variables (thread-safe initialization)
+.TP
+.B Random number generation
+OpenSSL 3.x provides thread-safe CSPRNG
+.TP
+.B No global mutable state
+All shared state is either const or atomic
+.SH CRYPTOGRAPHIC PROPERTIES
+.SS "Hash Function"
+libcuid2 uses NIST FIPS-202 SHA3-512, the standardized SHA-3 variant (not the
+original Keccak). Key properties:
+.IP \(bu 2
+64-byte (512-bit) output
+.IP \(bu
+Collision resistance: 2^256 operations
+.IP \(bu
+Preimage resistance: 2^512 operations
+.IP \(bu
+NIST-standardized domain separation byte (0x06)
+.IP \(bu
+FIPS 140-3 validated via OpenSSL 3.x
+.SS "Random Number Generation"
+OpenSSL's RAND_bytes() provides:
+.IP \(bu 2
+Cryptographically secure pseudo-random number generation (CSPRNG)
+.IP \(bu
+Automatic seeding from system entropy sources
+.IP \(bu
+No explicit initialization required (OpenSSL 3.x auto-initializes)
+.IP \(bu
+Thread-safe operation
+.SS "Collision Probability"
+The probability of collision depends on:
+.IP \(bu 2
+Identifier length (shorter = higher collision probability)
+.IP \(bu
+Number of identifiers generated
+.IP \(bu
+Time window of generation
+.PP
+For a 24-character identifier (default):
+.IP \(bu 2
+Base-36 provides ~139 bits of information
+.IP \(bu
+SHA3-512 hash provides 512 bits before encoding
+.IP \(bu
+Birthday paradox: 50% collision probability at ~2^70 identifiers
+.PP
+In practice, collision probability is dominated by the random bytes component,
+making collisions extremely unlikely even at scale.
+.SH COMPATIBILITY
+.SS "Cross-Platform"
+The library is designed for consistent behavior across all supported platforms:
+.IP \(bu 2
+Little-endian serialization for timestamp and counter (via boost::endian)
+.IP \(bu
+Big-endian interpretation for base-36 encoding
+.IP \(bu
+UTF-8 encoding for all string data
+.IP \(bu
+Sorted environment variables for deterministic fingerprints
+.SS "Cross-Implementation"
+For compatibility with other CUID2 implementations:
+.IP \(bu 2
+Use NIST FIPS-202 SHA3-512 (not original Keccak)
+.IP \(bu
+Use little-endian serialization for timestamp/counter
+.IP \(bu
+Use the same base-36 encoding algorithm
+.IP \(bu
+Use the same fingerprint logic (hostname + PID + sorted environment variables)
+.SS "ABI Compatibility"
+The library provides a C++ API using:
+.IP \(bu 2
+C++20 standard
+.IP \(bu
+std::string return values (by value)
+.IP \(bu
+Exceptions for error handling
+.IP \(bu
+Inline namespace versioning (planned for future versions)
+.SH BUILD SYSTEM
+libcuid2 uses CMake 4.0+ and vcpkg for dependency management:
+.SS "Dependencies"
+.TP
+.B OpenSSL 3.x
+Cryptographic primitives (Apache 2.0 license)
+.TP
+.B Boost libraries
+Multiprecision, Endian, Nowide (Boost Software License 1.0)
+.TP
+.B fmt
+Modern formatting library (MIT license)
+.SS "Build Types"
+.TP
+.B Debug
+\-O0, debug symbols, stack protection, address/undefined sanitizers (optional)
+.TP
+.B Release
+\-O3, link-time optimization, no debug symbols, NDEBUG defined
+.SS "Library Variants"
+.TP
+.B Windows
+Always builds as shared library (.dll)
+.TP
+.B Linux/macOS/BSD
+Defaults to shared (.so/.dylib), supports static (.a) via BUILD_SHARED_LIBS=OFF
+.SH PERFORMANCE
+.SS "Benchmarks"
+Typical performance characteristics (Apple M1, Release build):
+.IP \(bu 2
+~100,000 - 200,000 identifiers per second (single-threaded)
+.IP \(bu
+Scales linearly with number of threads (lock-free atomic operations)
+.IP \(bu
+Constant memory usage (fingerprint cached, no allocations in hot path)
+.SS "Optimization"
+The implementation is optimized for:
+.IP \(bu 2
+Minimal allocations (fingerprint cached, string reserved)
+.IP \(bu
+Lock-free counter operations (std::atomic fetch_add)
+.IP \(bu
+Efficient base-36 encoding (Boost.Multiprecision)
+.IP \(bu
+Stack protection and security hardening
+.SH FILES
+.TP
+.I /usr/include/cuid2/cuid2.hpp
+Main header file
+.TP
+.I /usr/include/cuid2/*.hpp
+Additional header files (counter, fingerprint, platform, utils)
+.TP
+.I /usr/lib/libcuid2.so
+Shared library (Linux/BSD)
+.TP
+.I /usr/lib/libcuid2.dylib
+Shared library (macOS)
+.TP
+.I /usr/lib/libcuid2.dll
+Shared library (Windows)
+.TP
+.I /usr/lib/libcuid2.a
+Static library (optional, non-Windows)
+.SH ENVIRONMENT
+The library reads all environment variables during fingerprint computation.
+No specific environment variables affect library behavior, but the set of
+environment variables contributes to the system fingerprint.
+.SH SEE ALSO
+.BR libcuid2 (3),
+.BR cuid2gen (1),
+.BR uuidgen (1),
+.BR openssl (1)
+.PP
+CUID2 specification: https://github.com/paralleldrive/cuid2
+.PP
+NIST FIPS-202 (SHA-3): https://csrc.nist.gov/publications/detail/fips/202/final
+.PP
+OpenSSL 3.x documentation: https://www.openssl.org/docs/
+.PP
+Boost libraries: https://www.boost.org/
+.SH STANDARDS
+The library conforms to:
+.IP \(bu 2
+.B C++20
+ISO/IEC 14882:2020
+.IP \(bu
+.B NIST FIPS-202
+SHA-3 Standard: Permutation-Based Hash and Extendable-Output Functions
+.IP \(bu
+.B POSIX.1-2017
+For POSIX-specific functionality (gethostname, getpid, environ)
+.IP \(bu
+.B Windows API
+For Windows-specific functionality (GetComputerNameA, GetCurrentProcessId, GetEnvironmentStringsW)
+.SH BUGS
+Report bugs to the libcuid2 issue tracker:
+https://github.com/[repository]/libcuid2/issues
+.SH AUTHOR
+Part of the libcuid2 project, a C++ port of the CUID2 identifier generation library.
+.SH COPYRIGHT
+See the LICENSE file in the libcuid2 source distribution for license information.

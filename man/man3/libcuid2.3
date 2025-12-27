@@ -1,0 +1,248 @@
+.TH LIBCUID2 3 "2025-12-20" "libcuid2" "Library Functions Manual"
+.SH NAME
+libcuid2 \- collision-resistant CUID2 identifier generation library
+.SH SYNOPSIS
+.nf
+.B #include <cuid2/cuid2.hpp>
+.PP
+.BI "std::string visus::cuid2::generate(int " max_length " = 24);"
+.PP
+Link with \fI\-lcuid2\fR
+.fi
+.SH DESCRIPTION
+The
+.B libcuid2
+library provides functions for generating collision-resistant, sortable unique
+identifiers using the CUID2 algorithm. CUID2 identifiers are suitable for use as
+database primary keys, distributed system identifiers, or anywhere collision-resistant
+unique identifiers are needed.
+.PP
+The library combines multiple sources of entropy and uniqueness:
+.IP \(bu 2
+.B Timestamp
+\- Current time in 100-nanosecond ticks for sortability
+.IP \(bu
+.B Atomic counter
+\- Thread-safe counter initialized with cryptographic randomness
+.IP \(bu
+.B System fingerprint
+\- Hostname, process ID, and environment variables
+.IP \(bu
+.B Cryptographic random bytes
+\- CSPRNG via OpenSSL for collision resistance
+.IP \(bu
+.B Random prefix
+\- Ensures identifiers start with a letter (a-z)
+.PP
+All components are hashed using NIST FIPS-202 SHA3-512 and encoded as base-36
+(0-9, a-z) for a compact, URL-safe representation.
+.SH FUNCTIONS
+.SS "Identifier Generation"
+.TP
+.BI "std::string visus::cuid2::generate(int " max_length " = 24)"
+Generates a CUID2 identifier of the specified length.
+.IP
+.I max_length
+specifies the total length of the returned identifier in characters.
+Valid range is 4 to 32 characters (inclusive). The default is 24 characters.
+.IP
+Returns a string containing the generated CUID2 identifier of exact length
+.IR max_length .
+.IP
+This function is thread-safe and can be called concurrently from multiple threads.
+.SH CONSTANTS
+The following constants are defined in the
+.B visus::cuid2
+namespace:
+.TP
+.B DEFAULT_LENGTH
+Default identifier length (24 characters). Provides good balance between
+compactness and collision resistance.
+.TP
+.B MIN_CUID2_LENGTH
+Minimum allowed identifier length (4 characters). Shorter identifiers have
+significantly higher collision probability.
+.TP
+.B MAX_CUID2_LENGTH
+Maximum allowed identifier length (32 characters). Longer identifiers provide
+more entropy but are less compact.
+.SH RETURN VALUE
+The
+.B generate()
+function returns a
+.B std::string
+containing the generated CUID2 identifier of exact length
+.IR max_length .
+The identifier consists only of lowercase alphanumeric characters (0-9, a-z)
+and always starts with a lowercase letter (a-z).
+.SH ERRORS
+The
+.B generate()
+function throws
+.B std::invalid_argument
+if
+.I max_length
+is outside the valid range [4, 32].
+.PP
+In rare cases, the function may throw
+.B std::runtime_error
+if OpenSSL operations fail (e.g., SHA-3 hashing or random number generation).
+.SH EXAMPLES
+.SS "Basic Usage"
+.nf
+#include <cuid2/cuid2.hpp>
+#include <iostream>
+
+int main() {
+    // Generate with default length (24)
+    std::string id = visus::cuid2::generate();
+    std::cout << "ID: " << id << std::endl;
+
+    return 0;
+}
+.fi
+.SS "Custom Length"
+.nf
+#include <cuid2/cuid2.hpp>
+#include <iostream>
+
+int main() {
+    // Generate 16-character identifier
+    std::string short_id = visus::cuid2::generate(16);
+    std::cout << "Short ID: " << short_id << std::endl;
+
+    // Generate 32-character identifier
+    std::string long_id = visus::cuid2::generate(32);
+    std::cout << "Long ID: " << long_id << std::endl;
+
+    return 0;
+}
+.fi
+.SS "Error Handling"
+.nf
+#include <cuid2/cuid2.hpp>
+#include <iostream>
+#include <stdexcept>
+
+int main() {
+    try {
+        // This will throw std::invalid_argument
+        std::string id = visus::cuid2::generate(100);
+    } catch (const std::invalid_argument& e) {
+        std::cerr << "Error: " << e.what() << std::endl;
+        return 1;
+    }
+
+    return 0;
+}
+.fi
+.SS "Concurrent Usage"
+.nf
+#include <cuid2/cuid2.hpp>
+#include <thread>
+#include <vector>
+#include <iostream>
+
+void generate_ids(int count) {
+    for (int i = 0; i < count; ++i) {
+        std::string id = visus::cuid2::generate();
+        std::cout << id << std::endl;
+    }
+}
+
+int main() {
+    // Generate IDs concurrently from multiple threads
+    std::vector<std::thread> threads;
+    for (int i = 0; i < 4; ++i) {
+        threads.emplace_back(generate_ids, 100);
+    }
+
+    for (auto& t : threads) {
+        t.join();
+    }
+
+    return 0;
+}
+.fi
+.SH NOTES
+.SS "Collision Resistance"
+CUID2 identifiers are designed to be collision-resistant through the use of:
+.IP \(bu 2
+Cryptographically secure random bytes (OpenSSL RAND_bytes)
+.IP \(bu
+High-resolution timestamps (100-nanosecond precision)
+.IP \(bu
+Atomic counters (unique within same timestamp)
+.IP \(bu
+System fingerprints (unique across machines/processes)
+.PP
+The probability of collision increases with shorter identifier lengths.
+For production use, lengths of 16 or greater are recommended.
+.SS "Sortability"
+CUID2 identifiers are sortable by creation time. When sorted lexicographically,
+newer identifiers will appear after older identifiers. This property is useful
+for range queries and temporal ordering in databases.
+.SS "Thread Safety"
+All functions in libcuid2 are thread-safe. The library uses:
+.IP \(bu 2
+.B std::atomic
+for counter operations
+.IP \(bu
+.B C++11 static local variables
+for thread-safe singleton initialization
+.IP \(bu
+.B OpenSSL
+thread-safe random number generation (OpenSSL 3.x)
+.SS "Platform Support"
+libcuid2 supports the following platforms:
+.IP \(bu 2
+Linux (x86_64, ARM64)
+.IP \(bu
+macOS (x86_64, ARM64/Apple Silicon)
+.IP \(bu
+Windows (x86_64, ARM64) with MSVC or MinGW
+.IP \(bu
+FreeBSD, OpenBSD, NetBSD (x86_64, ARM64)
+.SS "Cryptographic Details"
+The implementation uses:
+.IP \(bu 2
+.B NIST FIPS-202 SHA3-512
+\- Standardized SHA-3 variant (not original Keccak)
+.IP \(bu
+.B OpenSSL 3.x
+\- FIPS 140-3 validated cryptography
+.IP \(bu
+.B CSPRNG
+\- Cryptographically secure random number generation via RAND_bytes()
+.SH DEPENDENCIES
+libcuid2 depends on the following libraries:
+.IP \(bu 2
+.B OpenSSL 3.x
+\- Cryptographic primitives (SHA3-512, CSPRNG)
+.IP \(bu
+.B Boost.Multiprecision
+\- Arbitrary precision arithmetic for base-36 encoding
+.IP \(bu
+.B Boost.Endian
+\- Cross-platform endianness conversion
+.IP \(bu
+.B Boost.Nowide
+\- UTF-8/UTF-16 conversion (Windows only)
+.IP \(bu
+.B fmt
+\- Modern C++ formatting library
+.SH SEE ALSO
+.BR cuid2gen (1),
+.BR libcuid2 (7),
+.BR openssl (1),
+.BR uuidgen (1)
+.PP
+CUID2 specification: https://github.com/paralleldrive/cuid2
+.PP
+NIST FIPS-202 (SHA-3): https://csrc.nist.gov/publications/detail/fips/202/final
+.PP
+OpenSSL documentation: https://www.openssl.org/docs/
+.SH AUTHOR
+Part of the libcuid2 project, a C++ port of the CUID2 identifier generation library.
+.SH COPYRIGHT
+See the LICENSE file in the libcuid2 source distribution for license information.
