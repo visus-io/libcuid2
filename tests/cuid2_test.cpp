@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE(test_thread_safety)
     constexpr int NUM_THREADS = 10;
     constexpr int IDS_PER_THREAD = 1000;
 
-    std::vector<std::thread> threads;
+    std::vector<std::jthread> threads;
     std::vector<std::vector<std::string>> thread_ids(NUM_THREADS);
 
     threads.reserve(NUM_THREADS);
@@ -169,6 +169,7 @@ BOOST_AUTO_TEST_CASE(test_thread_safety)
         });
     }
 
+    // Explicitly join to ensure threads complete before accessing results
     for (auto& thread : threads) {
         thread.join();
     }
@@ -191,7 +192,7 @@ BOOST_AUTO_TEST_CASE(test_concurrent_generation_stability)
     std::atomic ready_threads{0};
     std::atomic start{false};
 
-    std::vector<std::thread> threads;
+    std::vector<std::jthread> threads;
     std::vector<std::set<std::string>> thread_sets(NUM_THREADS);
 
     threads.reserve(NUM_THREADS);
@@ -216,6 +217,7 @@ BOOST_AUTO_TEST_CASE(test_concurrent_generation_stability)
 
     start.store(true);
 
+    // Explicitly join to ensure threads complete before accessing results
     for (auto& thread : threads) {
         thread.join();
     }
@@ -239,7 +241,7 @@ BOOST_AUTO_TEST_CASE(test_format_consistency_across_threads)
     constexpr int NUM_THREADS = 8;
     constexpr int IDS_PER_THREAD = 100;
 
-    std::vector<std::thread> threads;
+    std::vector<std::jthread> threads;
     std::vector all_valid(NUM_THREADS, true);
 
     threads.reserve(NUM_THREADS);
@@ -256,6 +258,7 @@ BOOST_AUTO_TEST_CASE(test_format_consistency_across_threads)
         });
     }
 
+    // Explicitly join to ensure threads complete before accessing results
     for (auto& thread : threads) {
         thread.join();
     }
@@ -347,7 +350,7 @@ BOOST_AUTO_TEST_CASE(test_multiple_lengths_concurrent)
     constexpr int NUM_THREADS = 5;
     const std::vector LENGTHS = {8, 16, 20, 24, 32};
 
-    std::vector<std::thread> threads;
+    std::vector<std::jthread> threads;
     std::vector<std::vector<std::string>> thread_ids(NUM_THREADS);
 
     threads.reserve(NUM_THREADS);
@@ -362,6 +365,7 @@ BOOST_AUTO_TEST_CASE(test_multiple_lengths_concurrent)
         });
     }
 
+    // Explicitly join to ensure threads complete before accessing results
     for (auto& thread : threads) {
         thread.join();
     }

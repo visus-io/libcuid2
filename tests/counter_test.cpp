@@ -42,7 +42,7 @@ BOOST_AUTO_TEST_CASE(test_counter_thread_safety)
     constexpr int NUM_THREADS = 10;
     constexpr int VALUES_PER_THREAD = 1000;
 
-    std::vector<std::thread> threads;
+    std::vector<std::jthread> threads;
     std::vector<std::vector<int64_t>> thread_values(NUM_THREADS);
 
     threads.reserve(NUM_THREADS);
@@ -56,6 +56,7 @@ BOOST_AUTO_TEST_CASE(test_counter_thread_safety)
         });
     }
 
+    // Explicitly join to ensure threads complete before accessing results
     for (auto& thread : threads) {
         thread.join();
     }
@@ -106,7 +107,7 @@ BOOST_AUTO_TEST_CASE(test_counter_concurrent_access_stability)
     std::atomic ready_threads{0};
     std::atomic start{false};
 
-    std::vector<std::thread> threads;
+    std::vector<std::jthread> threads;
     std::vector<std::set<int64_t>> thread_sets(NUM_THREADS);
 
     threads.reserve(NUM_THREADS);
@@ -131,6 +132,7 @@ BOOST_AUTO_TEST_CASE(test_counter_concurrent_access_stability)
 
     start.store(true);
 
+    // Explicitly join to ensure threads complete before accessing results
     for (auto& thread : threads) {
         thread.join();
     }

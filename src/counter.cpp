@@ -57,6 +57,19 @@ namespace visus::cuid2 {
     Counter::Counter() : value_{generate_initial_counter_value()} {
     }
 
+    /// Returns the singleton Counter instance.
+    ///
+    /// This function implements the Meyers singleton pattern with thread-safe
+    /// initialization guaranteed by C++11. The static local variable is initialized
+    /// exactly once, even when called concurrently from multiple threads.
+    ///
+    /// @return Reference to the singleton Counter instance
+    /// @note Thread-safe initialization guaranteed by C++11 static local variables
+    Counter& Counter::instance() {
+        static Counter instance;
+        return instance;
+    }
+
     /// Returns the next counter value in a thread-safe manner.
     ///
     /// This static method accesses the singleton Counter instance and atomically

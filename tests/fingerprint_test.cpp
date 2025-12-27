@@ -107,7 +107,7 @@ BOOST_AUTO_TEST_CASE(test_fingerprint_thread_safety)
     constexpr int NUM_THREADS = 10;
     constexpr int ITERATIONS = 100;
 
-    std::vector<std::thread> threads;
+    std::vector<std::jthread> threads;
     std::vector<const std::vector<uint8_t>*> pointers(static_cast<size_t>(NUM_THREADS) * ITERATIONS);
 
     threads.reserve(NUM_THREADS);
@@ -121,6 +121,7 @@ BOOST_AUTO_TEST_CASE(test_fingerprint_thread_safety)
         });
     }
 
+    // Explicitly join to ensure threads complete before accessing results
     for (auto& thread : threads) {
         thread.join();
     }
@@ -139,7 +140,7 @@ BOOST_AUTO_TEST_CASE(test_fingerprint_concurrent_access_stability)
     std::atomic ready_threads{0};
     std::atomic start{false};
 
-    std::vector<std::thread> threads;
+    std::vector<std::jthread> threads;
     std::vector<std::vector<uint8_t>> thread_copies(NUM_THREADS);
 
     threads.reserve(NUM_THREADS);
@@ -167,6 +168,7 @@ BOOST_AUTO_TEST_CASE(test_fingerprint_concurrent_access_stability)
 
     start.store(true);
 
+    // Explicitly join to ensure threads complete before accessing results
     for (auto& thread : threads) {
         thread.join();
     }

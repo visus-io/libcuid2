@@ -23,10 +23,7 @@ namespace visus::cuid2 {
         ///
         /// @return Reference to the singleton Fingerprint instance
         /// @note Thread-safe initialization guaranteed by C++11 static local variables
-        static Fingerprint& instance() {
-            static Fingerprint instance;
-            return instance;
-        }
+        static Fingerprint& instance();
 
         /// Cached fingerprint byte sequence, computed once during construction.
         std::vector<uint8_t> cached_value_;

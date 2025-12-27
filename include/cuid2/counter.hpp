@@ -22,10 +22,7 @@ namespace visus::cuid2 {
         ///
         /// @return Reference to the singleton Counter instance
         /// @note Thread-safe initialization guaranteed by C++11 static local variables
-        static Counter& instance() {
-            static Counter instance;
-            return instance;
-        }
+        static Counter& instance();
 
         /// Atomic counter value, safe for concurrent access.
         std::atomic<int64_t> value_;

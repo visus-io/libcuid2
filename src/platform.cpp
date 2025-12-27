@@ -14,6 +14,9 @@
 #include "cuid2/platform.hpp"
 
 #include <array>
+#include <bit>
+#include <cstddef>
+#include <functional>
 #include <stdexcept>
 
 #include <openssl/rand.h>
@@ -66,21 +69,22 @@ namespace visus::cuid2::platform {
     /// @param LEN Number of random bytes to generate
     /// @note Thread-safe: Can be called concurrently from multiple threads
     /// @note No explicit initialization required (OpenSSL 3.x auto-initializes)
-    void get_random_bytes(void *buf, const size_t LEN) noexcept {
-        RAND_bytes(static_cast<unsigned char*>(buf), static_cast<int>(LEN));
+    void get_random_bytes(unsigned char *buf, const size_t LEN) noexcept {
+        RAND_bytes(buf, static_cast<int>(LEN));
     }
 
     /// Generates a cryptographically secure random 64-bit integer.
     ///
     /// Convenience wrapper around get_random_bytes() for generating random
-    /// int64_t values using OpenSSL's CSPRNG.
+    /// int64_t values using OpenSSL's CSPRNG. Uses std::byte for type-safe
+    /// byte representation and std::bit_cast for conversion.
     ///
     /// @return A cryptographically random int64_t value
     /// @note Thread-safe: Can be called concurrently from multiple threads
     int64_t get_random_int64() noexcept {
-        int64_t value = 0;
-        RAND_bytes(reinterpret_cast<unsigned char*>(&value), sizeof(value));
-        return value;
+        std::array<std::byte, sizeof(int64_t)> bytes{};
+        RAND_bytes(reinterpret_cast<unsigned char*>(bytes.data()), bytes.size());
+        return std::bit_cast<int64_t>(bytes);
     }
 
     /// Returns the current process ID.
@@ -131,12 +135,12 @@ namespace visus::cuid2::platform {
     /// Uses GetEnvironmentStringsW() to retrieve the environment block as
     /// UTF-16 strings, then converts each key-value pair to UTF-8 using
     /// boost::nowide. The returned map is automatically sorted by key
-    /// (std::map guarantees lexicographical ordering).
+    /// using std::less<> for lexicographical ordering.
     ///
     /// @return A map of environment variable names to values (UTF-8 encoded)
     /// @note The map is automatically sorted by key for deterministic fingerprints
-    std::map<std::string, std::string> get_environment_variables() {
-        std::map<std::string, std::string> env_vars;
+    std::map<std::string, std::string, std::less<>> get_environment_variables() {
+        std::map<std::string, std::string, std::less<>> env_vars;
 
         /// RAII deleter for Windows environment strings block.
         /// Ensures FreeEnvironmentStringsW() is called when the unique_ptr goes out of scope.
@@ -165,7 +169,7 @@ namespace visus::cuid2::platform {
             if (delimiter != nullptr) [[likely]] {
                 const size_t KEY_LENGTH = delimiter - env;
 
-                env_vars.emplace_hint(env_vars.end(),
+                env_vars.try_emplace(
                     boost::nowide::narrow(env, KEY_LENGTH),
                     boost::nowide::narrow(delimiter + 1));
             }
@@ -207,19 +211,19 @@ namespace visus::cuid2::platform {
     ///
     /// Iterates over the global `environ` variable to extract all environment
     /// variables. Each entry is parsed as "KEY=VALUE" and stored in a std::map.
-    /// The returned map is automatically sorted by key (std::map guarantees
-    /// lexicographical ordering).
+    /// The returned map is automatically sorted by key using std::less<>
+    /// for lexicographical ordering.
     ///
     /// @return A map of environment variable names to values
     /// @note The map is automatically sorted by key for deterministic fingerprints
-    std::map<std::string, std::string> get_environment_variables() {
-        std::map<std::string, std::string> env_vars;
+    std::map<std::string, std::string, std::less<>> get_environment_variables() {
+        std::map<std::string, std::string, std::less<>> env_vars;
 
         for (const char * const *env = environ; *env != nullptr; env++) {
             if (const char *delimiter = std::strchr(*env, '='); delimiter != nullptr) [[likely]] {
                 const size_t KEY_LENGTH = delimiter - *env;
 
-                env_vars.emplace_hint(env_vars.end(),
+                env_vars.try_emplace(
                     std::string(*env, KEY_LENGTH),
                     std::string(delimiter + 1));
             }

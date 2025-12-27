@@ -8,6 +8,7 @@
 #ifndef LIBCUID2_PLATFORM_HPP
 #define LIBCUID2_PLATFORM_HPP
 
+#include <functional>
 #include <map>
 #include <string>
 
@@ -19,7 +20,7 @@ namespace visus::cuid2::platform {
     /// @param buf Pointer to buffer to fill with random bytes
     /// @param LEN Number of random bytes to generate
     /// @note Thread-safe: Can be called concurrently from multiple threads
-    void get_random_bytes(void *buf, size_t LEN) noexcept;
+    void get_random_bytes(unsigned char *buf, size_t LEN) noexcept;
 
     /// Generates a cryptographically secure random 64-bit integer.
     ///
@@ -54,9 +55,9 @@ namespace visus::cuid2::platform {
     /// - Windows: Uses GetEnvironmentStringsW() with UTF-16 to UTF-8 conversion
     /// - POSIX: Uses global environ variable
     ///
-    /// @return A map of environment variable names to values (automatically sorted by key)
+    /// @return A map of environment variable names to values (automatically sorted by key using std::less<>)
     /// @note The map is sorted for deterministic fingerprint generation
-    [[nodiscard]] std::map<std::string, std::string> get_environment_variables();
+    [[nodiscard]] std::map<std::string, std::string, std::less<>> get_environment_variables();
 
 }
 
