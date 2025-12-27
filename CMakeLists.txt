@@ -261,6 +261,51 @@ if(BUILD_TESTS)
     )
 
     add_test(NAME Cuid2Test COMMAND cuid2_test)
+
+    # Utils test
+    add_executable(utils_test
+        tests/utils_test.cpp
+        src/utils.cpp
+        src/platform.cpp
+    )
+
+    target_include_directories(utils_test
+        PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/src
+    )
+
+    target_link_libraries(utils_test
+        PRIVATE
+            ${PLATFORM_LIBS}
+            OpenSSL::Crypto
+            Boost::unit_test_framework
+            fmt::fmt
+    )
+
+    add_test(NAME UtilsTest COMMAND utils_test)
+
+    # Platform test
+    add_executable(platform_test
+        tests/platform_test.cpp
+        src/platform.cpp
+    )
+
+    target_include_directories(platform_test
+        PRIVATE
+            ${CMAKE_CURRENT_SOURCE_DIR}/include
+            ${CMAKE_CURRENT_SOURCE_DIR}/src
+    )
+
+    target_link_libraries(platform_test
+        PRIVATE
+            ${PLATFORM_LIBS}
+            OpenSSL::Crypto
+            Boost::unit_test_framework
+            fmt::fmt
+    )
+
+    add_test(NAME PlatformTest COMMAND platform_test)
 endif()
 
 # ==============================================================================
