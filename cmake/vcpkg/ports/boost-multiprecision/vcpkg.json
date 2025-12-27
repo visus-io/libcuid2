@@ -1,0 +1,5 @@
+{
+  "name": "boost-multiprecision",
+  "version": "1.83.0",
+  "description": "System-provided Boost.Multiprecision library (stub port for non-Windows platforms)"
+}

@@ -115,6 +115,13 @@ if(ENABLE_SANITIZERS AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT MSVC)
     add_link_options(-fsanitize=address -fsanitize=undefined)
 endif()
 
+# Optional: Enable code coverage for Debug builds (can be enabled with -DENABLE_COVERAGE=ON)
+option(ENABLE_COVERAGE "Enable code coverage instrumentation in Debug builds" OFF)
+if(ENABLE_COVERAGE AND CMAKE_BUILD_TYPE STREQUAL "Debug" AND NOT MSVC)
+    add_compile_options(--coverage -fprofile-update=atomic)
+    add_link_options(--coverage)
+endif()
+
 # ==============================================================================
 # Dependencies
 # ==============================================================================

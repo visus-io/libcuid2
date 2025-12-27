@@ -1,0 +1,5 @@
+{
+  "name": "boost-endian",
+  "version": "1.83.0",
+  "description": "System-provided Boost.Endian library (stub port for non-Windows platforms)"
+}

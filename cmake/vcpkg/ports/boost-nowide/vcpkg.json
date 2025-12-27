@@ -1,0 +1,5 @@
+{
+  "name": "boost-nowide",
+  "version": "1.83.0",
+  "description": "System-provided Boost.Nowide library (stub port for non-Windows platforms)"
+}

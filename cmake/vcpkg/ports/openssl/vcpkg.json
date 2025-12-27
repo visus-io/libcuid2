@@ -1,0 +1,5 @@
+{
+  "name": "openssl",
+  "version": "3.0.0",
+  "description": "System-provided OpenSSL library (stub port for non-Windows platforms)"
+}
