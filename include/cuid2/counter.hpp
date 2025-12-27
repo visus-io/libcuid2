@@ -14,15 +14,15 @@
 namespace visus::cuid2 {
     /// Thread-safe atomic counter singleton for CUID2 generation.
     ///
-    /// This class implements the Meyers singleton pattern with a cryptographically
-    /// random initial value. The counter provides monotonically increasing values
-    /// that ensure uniqueness within the same timestamp across concurrent requests.
+    /// This class uses C++17 inline static variable for singleton implementation
+    /// with a cryptographically random initial value. The counter provides
+    /// monotonically increasing values that ensure uniqueness within the same
+    /// timestamp across concurrent requests.
     class Counter {
-        /// Returns the singleton Counter instance.
+        /// Singleton instance with thread-safe initialization.
         ///
-        /// @return Reference to the singleton Counter instance
-        /// @note Thread-safe initialization guaranteed by C++11 static local variables
-        static Counter& instance();
+        /// @note Defined outside class after type is complete
+        static Counter instance_;
 
         /// Atomic counter value, safe for concurrent access.
         std::atomic<int64_t> value_;
@@ -37,6 +37,10 @@ namespace visus::cuid2 {
         /// @note Thread-safe: Can be called concurrently from multiple threads
         [[nodiscard]] static int64_t next();
     };
+
+    /// Inline static definition of singleton instance.
+    /// Must be defined after the class is complete.
+    inline Counter Counter::instance_{};
 } // namespace visus::cuid2
 
 #endif // LIBCUID2_COUNTER_HPP

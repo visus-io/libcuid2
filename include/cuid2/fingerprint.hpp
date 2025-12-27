@@ -14,16 +14,15 @@
 namespace visus::cuid2 {
     /// System fingerprint singleton for CUID2 generation.
     ///
-    /// This class implements the Meyers singleton pattern with a cached fingerprint
-    /// value computed once during initialization. The fingerprint combines hostname,
-    /// process ID (little-endian), and sorted environment variables to create a
-    /// unique identifier for the system/process.
+    /// This class uses C++17 inline static variable for singleton implementation
+    /// with a cached fingerprint value computed once during initialization. The
+    /// fingerprint combines hostname, process ID (little-endian), and sorted
+    /// environment variables to create a unique identifier for the system/process.
     class Fingerprint {
-        /// Returns the singleton Fingerprint instance.
+        /// Singleton instance with thread-safe initialization.
         ///
-        /// @return Reference to the singleton Fingerprint instance
-        /// @note Thread-safe initialization guaranteed by C++11 static local variables
-        static Fingerprint& instance();
+        /// @note Defined outside class after type is complete
+        static Fingerprint instance_;
 
         /// Cached fingerprint byte sequence, computed once during construction.
         std::vector<uint8_t> cached_value_;
@@ -38,6 +37,10 @@ namespace visus::cuid2 {
         /// @note Thread-safe: Can be called concurrently from multiple threads
         [[nodiscard]] static const std::vector<uint8_t>& get();
     };
+
+    /// Inline static definition of singleton instance.
+    /// Must be defined after the class is complete.
+    inline Fingerprint Fingerprint::instance_{};
 } // namespace visus::cuid2
 
 #endif // LIBCUID2_FINGERPRINT_HPP

@@ -25,7 +25,7 @@
 
 #ifdef _WIN32
     #include <memory>
-    #include <windows.h>
+    #include <windows.h> // NOSONAR(S3806) - Microsoft uses lowercase windows.h
     #include <processenv.h>
     #include <boost/nowide/convert.hpp>
 #else
@@ -76,14 +76,14 @@ namespace visus::cuid2::platform {
     /// Generates a cryptographically secure random 64-bit integer.
     ///
     /// Convenience wrapper around get_random_bytes() for generating random
-    /// int64_t values using OpenSSL's CSPRNG. Uses std::byte for type-safe
-    /// byte representation and std::bit_cast for conversion.
+    /// int64_t values using OpenSSL's CSPRNG. Uses std::bit_cast for
+    /// type-safe conversion from bytes to int64_t.
     ///
     /// @return A cryptographically random int64_t value
     /// @note Thread-safe: Can be called concurrently from multiple threads
     int64_t get_random_int64() noexcept {
-        std::array<std::byte, sizeof(int64_t)> bytes{};
-        RAND_bytes(reinterpret_cast<unsigned char*>(bytes.data()), bytes.size());
+        std::array<unsigned char, sizeof(int64_t)> bytes{};
+        RAND_bytes(bytes.data(), bytes.size());
         return std::bit_cast<int64_t>(bytes);
     }
 
@@ -121,9 +121,8 @@ namespace visus::cuid2::platform {
     /// @return The computer name, or a random hex string if retrieval fails
     std::string get_hostname() {
         std::array<char, HOSTNAME_BUFFER_SIZE> hostname{};
-        auto size = static_cast<DWORD>(hostname.size());
 
-        if (GetComputerNameA(hostname.data(), &size)) {
+        if (auto size = static_cast<DWORD>(hostname.size()); GetComputerNameA(hostname.data(), &size)) {
             return hostname.data();
         }
 
@@ -158,9 +157,9 @@ namespace visus::cuid2::platform {
         }
 
         for (LPWCH env = ENV_BLOCK.get(); *env != L'\0';) {
-            LPWCH delimiter = nullptr;
+            LPCWCH delimiter = nullptr;
             size_t length = 0;
-            for (LPWCH ptr = env; *ptr != L'\0'; ++ptr, ++length) {
+            for (LPCWCH ptr = env; *ptr != L'\0'; ++ptr, ++length) {
                 if (*ptr == L'=' && delimiter == nullptr) {
                     delimiter = ptr;
                 }

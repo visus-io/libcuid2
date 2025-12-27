@@ -19,6 +19,7 @@
 #include <cstring>
 #include <memory>
 #include <stdexcept>
+#include <string_view>
 
 #include <boost/endian/conversion.hpp>
 #include <openssl/evp.h>
@@ -156,7 +157,7 @@ namespace visus::cuid2 {
         /// @param ENCODED Base-36 encoded hash string
         /// @param MAX_LENGTH Total desired identifier length (including prefix)
         /// @return Formatted CUID2 identifier of exact length MAX_LENGTH
-        [[nodiscard]] std::string format_result(const char PREFIX, const std::string& ENCODED, const int MAX_LENGTH) {
+        [[nodiscard]] std::string format_result(const char PREFIX, const std::string_view ENCODED, const int MAX_LENGTH) {
             std::string result;
             result.reserve(MAX_LENGTH);
             result += PREFIX;

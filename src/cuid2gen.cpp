@@ -35,7 +35,8 @@ int main(const int argc, char* argv[]) {
 
     int length = DEFAULT_LENGTH;
 
-    for (int i = 1; i < argc; ++i) {
+    int i = 1;
+    while (i < argc) {
         const std::string_view ARG{argv[i]};
 
         if (is_help_flag(ARG)) {
@@ -50,7 +51,8 @@ int main(const int argc, char* argv[]) {
                 return 1;
             }
 
-            const std::string_view LENGTH_ARG{argv[++i]};
+            ++i;
+            const std::string_view LENGTH_ARG{argv[i]};
             const auto [ptr, ec] = std::from_chars(
                 LENGTH_ARG.data(),
                 LENGTH_ARG.data() + LENGTH_ARG.size(),
@@ -62,6 +64,7 @@ int main(const int argc, char* argv[]) {
                 return 1;
             }
 
+            ++i;
             continue;
         }
 

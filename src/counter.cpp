@@ -53,32 +53,19 @@ namespace visus::cuid2 {
     /// provides a random seed multiplied by COUNTER_SEED_MULTIPLIER. This ensures
     /// different processes have different starting counter values.
     ///
-    /// @note This constructor is private and only called once by the singleton pattern
+    /// @note This constructor is private and only called once during static initialization
     Counter::Counter() : value_{generate_initial_counter_value()} {
-    }
-
-    /// Returns the singleton Counter instance.
-    ///
-    /// This function implements the Meyers singleton pattern with thread-safe
-    /// initialization guaranteed by C++11. The static local variable is initialized
-    /// exactly once, even when called concurrently from multiple threads.
-    ///
-    /// @return Reference to the singleton Counter instance
-    /// @note Thread-safe initialization guaranteed by C++11 static local variables
-    Counter& Counter::instance() {
-        static Counter instance;
-        return instance;
     }
 
     /// Returns the next counter value in a thread-safe manner.
     ///
-    /// This static method accesses the singleton Counter instance and atomically
+    /// This static method accesses the inline static singleton instance and atomically
     /// increments its value, returning the pre-increment value. The operation is
     /// lock-free on most platforms and safe for concurrent access.
     ///
     /// @return The next sequential counter value (monotonically increasing)
     /// @note Thread-safe: Can be called concurrently from multiple threads
     int64_t Counter::next() {
-        return instance().value_.fetch_add(1);
+        return instance_.value_.fetch_add(1);
     }
 } // namespace visus::cuid2

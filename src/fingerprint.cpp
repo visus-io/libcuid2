@@ -80,33 +80,19 @@ namespace visus::cuid2 {
     /// and cached for the lifetime of the process. This ensures consistent
     /// fingerprint values across all CUID2 generations within the same process.
     ///
-    /// @note This constructor is private and only called once by the singleton pattern
-    /// @note Thread-safe initialization is guaranteed by C++11 static local variables
+    /// @note This constructor is private and only called once during static initialization
     Fingerprint::Fingerprint() : cached_value_{generate()} {
-    }
-
-    /// Returns the singleton Fingerprint instance.
-    ///
-    /// This function implements the Meyers singleton pattern with thread-safe
-    /// initialization guaranteed by C++11. The static local variable is initialized
-    /// exactly once, even when called concurrently from multiple threads.
-    ///
-    /// @return Reference to the singleton Fingerprint instance
-    /// @note Thread-safe initialization guaranteed by C++11 static local variables
-    Fingerprint& Fingerprint::instance() {
-        static Fingerprint instance;
-        return instance;
     }
 
     /// Returns the cached system fingerprint.
     ///
-    /// This static method accesses the singleton Fingerprint instance and returns
+    /// This static method accesses the inline static singleton instance and returns
     /// a reference to the pre-computed fingerprint byte sequence. The fingerprint
     /// remains constant for the lifetime of the process.
     ///
     /// @return A const reference to the fingerprint byte vector
     /// @note Thread-safe: Can be called concurrently from multiple threads
     const std::vector<uint8_t>& Fingerprint::get() {
-        return instance().cached_value_;
+        return instance_.cached_value_;
     }
 } // namespace visus::cuid2

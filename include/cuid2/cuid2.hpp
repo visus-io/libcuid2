@@ -31,10 +31,7 @@ namespace visus::cuid2 {
     /// system-level issues with the cryptographic library.
     class Cuid2Error : public std::runtime_error {
     public:
-        /// Constructs a Cuid2Error with the specified error message.
-        ///
-        /// @param message Description of the error condition
-        explicit Cuid2Error(const std::string& message) : std::runtime_error(message) {}
+        using std::runtime_error::runtime_error;
     };
     /// Default CUID2 identifier length in characters.
     /// Provides a good balance between compactness and collision resistance.
