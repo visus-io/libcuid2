@@ -1,0 +1,110 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - 'renovate.json'
+      - 'LICENSE'
+      - '.gitignore'
+  pull_request:
+    paths-ignore:
+      - '**.md'
+      - 'renovate.json'
+      - 'LICENSE'
+      - '.gitignore'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-analyze:
+    name: Build & Analyze
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      actions: read
+      packages: write
+    env:
+      VCPKG_BINARY_SOURCES: 'clear;x-gha,readwrite'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Setup build tools
+        uses: lukka/get-cmake@9e07ecdcee1b12e5037e42f410b67f03e2f626e1 # v4.2.1
+        with:
+          cmakeVersion: '~4.2.0'
+          ninjaVersion: '^1.12.0'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            build-essential \
+            libssl-dev \
+            libboost-all-dev \
+            libfmt-dev \
+            gcovr
+
+      - name: Setup vcpkg
+        uses: lukka/run-vcpkg@5e0cab206a5ea620130caf672fce3e4a6b5666a1 # v11.5
+
+      - name: Configure
+        run: |
+          cmake -B build \
+            -G Ninja \
+            -DCMAKE_BUILD_TYPE=Debug \
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
+            -DBUILD_TESTS=ON \
+            -DENABLE_COVERAGE=ON \
+            -DCMAKE_TOOLCHAIN_FILE=$VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake \
+            -DVCPKG_OVERLAY_PORTS=${{ github.workspace }}/cmake/vcpkg/ports \
+            -DVCPKG_OVERLAY_TRIPLETS=${{ github.workspace }}/cmake/vcpkg/triplets
+
+      - name: Build
+        run: |
+          echo "Checking CMake coverage configuration..."
+          grep -i "coverage" build/CMakeCache.txt || echo "No coverage settings found in CMakeCache.txt"
+          cmake --build build
+
+      - name: Verify linkage
+        run: |
+          echo "Checking library dependencies..."
+          ldd build/libcuid2.so | grep -E "(openssl|boost|fmt)" || echo "No system libraries found in ldd output"
+          echo ""
+          echo "Verifying system libraries are used (not vcpkg)..."
+          if ldd build/libcuid2.so | grep -q "vcpkg_installed"; then
+            echo "ERROR: vcpkg libraries detected instead of system libraries!"
+            exit 1
+          else
+            echo "SUCCESS: Using system libraries"
+          fi
+
+      - name: Test
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Coverage
+        run: |
+          cd build
+          gcovr . \
+            --root .. \
+            --sonarqube coverage.xml \
+            --filter '../src/' \
+            --exclude '../src/cuid2gen.cpp' \
+            --print-summary
+
+      - name: Analyze
+        if: github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]'
+        uses: SonarSource/sonarqube-scan-action@a31c9398be7ace6bbfaf30c0bd5d415f843d45e9 # v7.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io

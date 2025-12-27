@@ -1,0 +1,5 @@
+{
+  "name": "boost-test",
+  "version": "1.83.0",
+  "description": "System-provided Boost.Test library (stub port for non-Windows platforms)"
+}

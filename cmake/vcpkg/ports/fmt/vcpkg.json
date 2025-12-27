@@ -1,0 +1,5 @@
+{
+  "name": "fmt",
+  "version": "10.0.0",
+  "description": "System-provided fmt library (stub port for non-Windows platforms)"
+}
