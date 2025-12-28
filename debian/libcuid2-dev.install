@@ -1,0 +1,3 @@
+usr/include/*
+usr/lib/*/libcuid2.so
+usr/lib/*/cmake/cuid2/*

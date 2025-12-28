@@ -1,0 +1,23 @@
+compression = "xz"
+compression-level = 9
+
+tar-ignore = ".git"
+tar-ignore = ".github"
+tar-ignore = "build-*"
+tar-ignore = "vcpkg"
+tar-ignore = "vcpkg_installed"
+tar-ignore = ".vs"
+tar-ignore = ".vscode"
+tar-ignore = "*.user"
+tar-ignore = ".DS_Store"
+tar-ignore = "*.deb"
+tar-ignore = "*.ddeb"
+tar-ignore = "*.buildinfo"
+tar-ignore = "*.changes"
+tar-ignore = ".idea"
+tar-ignore = "cmake-build-*"
+
+extend-diff-ignore = "^build-.*"
+extend-diff-ignore = "^vcpkg$"
+extend-diff-ignore = "^vcpkg_installed$"
+extend-diff-ignore = "^\\.git.*"

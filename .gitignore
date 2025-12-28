@@ -29,3 +29,22 @@ compile_commands.json
 
 # macOS
 .DS_Store
+
+# Debian package build artifacts
+debian/tmp/
+debian/.debhelper/
+debian/*/
+!debian/source/
+debian/files
+debian/*.substvars
+debian/*.debhelper.log
+debian/debhelper-build-stamp
+obj-*/
+
+*.deb
+*.ddeb
+*.dsc
+*.changes
+*.buildinfo
+*.tar.xz
+*.tar.gz
