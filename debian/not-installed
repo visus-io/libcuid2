@@ -1,0 +1,16 @@
+# Files installed by CMake that are handled separately by debhelper
+usr/share/man/man1/cuid2gen.1
+usr/share/man/man3/libcuid2.3
+usr/share/man/man7/libcuid2.7
+# Translation directories (empty for now)
+usr/share/man/de
+usr/share/man/es
+usr/share/man/fr
+usr/share/man/it
+usr/share/man/ja
+usr/share/man/ko
+usr/share/man/pl
+usr/share/man/pt
+usr/share/man/pt_BR
+usr/share/man/ru
+usr/share/man/zh_CN

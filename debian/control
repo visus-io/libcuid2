@@ -1,0 +1,60 @@
+Source: libcuid2
+Section: libs
+Priority: optional
+Maintainer: Visus Development Team <admin@projects.visus.io>
+Build-Depends: debhelper-compat (= 13),
+               cmake (>= 4.0),
+               pkg-config,
+               libssl-dev (>= 3.0),
+               libboost-dev (>= 1.74),
+               libfmt-dev (>= 9.0)
+Standards-Version: 4.6.2
+Homepage: https://github.com/visus-io/libcuid2
+Vcs-Git: https://github.com/visus-io/libcuid2.git
+Vcs-Browser: https://github.com/visus-io/libcuid2
+Rules-Requires-Root: no
+Testsuite: autopkgtest
+
+Package: libcuid2-0
+Architecture: any
+Multi-Arch: same
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Collision-resistant unique identifiers library
+ libcuid2 is a C++ implementation of Cuid2, providing secure, collision-resistant,
+ URL-safe, and sortable unique identifiers.
+ .
+ Features:
+  * Collision-resistant using cryptographic primitives (SHA3-512)
+  * Sortable by timestamp for chronological ordering
+  * URL-safe base-36 encoding
+  * Thread-safe concurrent generation
+  * Configurable length (4-32 characters, default 24)
+ .
+ This package contains the shared library.
+
+Package: libcuid2-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends: libcuid2-0 (= ${binary:Version}),
+         ${misc:Depends},
+         libssl-dev (>= 3.0),
+         libboost-dev (>= 1.74)
+Description: Collision-resistant unique identifiers library (development files)
+ libcuid2 is a C++ implementation of Cuid2, providing secure, collision-resistant,
+ URL-safe, and sortable unique identifiers.
+ .
+ This package contains the development files including headers, CMake
+ configuration files, and manual pages for library functions.
+
+Package: cuid2gen
+Section: utils
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: Command-line tool for generating Cuid2 identifiers
+ cuid2gen is a command-line utility for generating Cuid2 identifiers.
+ .
+ Cuid2 identifiers are collision-resistant, sortable, URL-safe unique
+ identifiers suitable for distributed systems, databases, and web applications.
+ .
+ This package contains the command-line executable and user manual.
