@@ -22,13 +22,18 @@ namespace visus::cuid2 {
         /// Singleton instance with thread-safe initialization.
         ///
         /// @note Defined outside class after type is complete
-        static Fingerprint instance_;
+        static Fingerprint instance;
+
+        /// Generates the system fingerprint byte sequence.
+        ///
+        /// @return A byte vector containing the concatenated fingerprint data
+        static std::vector<uint8_t> generate();
 
         /// Cached fingerprint byte sequence, computed once during construction.
-        std::vector<uint8_t> cached_value_;
+        std::vector<uint8_t> cached_value_{generate()};
 
         /// Private constructor, computes and caches the fingerprint.
-        Fingerprint();
+        Fingerprint() = default;
 
     public:
         /// Returns the cached system fingerprint.
@@ -40,7 +45,7 @@ namespace visus::cuid2 {
 
     /// Inline static definition of singleton instance.
     /// Must be defined after the class is complete.
-    inline Fingerprint Fingerprint::instance_{};
+    inline Fingerprint Fingerprint::instance{};
 } // namespace visus::cuid2
 
 #endif // LIBCUID2_FINGERPRINT_HPP

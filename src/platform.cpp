@@ -32,7 +32,7 @@
     #include <cstring>
 
     #include <unistd.h>
-extern char **environ; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables)
+extern char **environ; // NOLINT(cppcoreguidelines-avoid-non-const-global-variables) NOSONAR(S5421) - POSIX-compliant implementation
 #endif
 
 namespace visus::cuid2::platform {
@@ -199,7 +199,7 @@ namespace visus::cuid2::platform {
     std::string get_hostname() {
         std::array<char, HOSTNAME_BUFFER_SIZE> hostname{};
 
-        if (gethostname(hostname.data(), hostname.size()) == 0) {
+        if (const int RESULT = gethostname(hostname.data(), hostname.size()); RESULT == 0) {
             return hostname.data();
         }
 
@@ -224,7 +224,7 @@ namespace visus::cuid2::platform {
 
                 env_vars.try_emplace(
                     std::string(*env, KEY_LENGTH),
-                    std::string(delimiter + 1));
+                    delimiter + 1);
             }
         }
 

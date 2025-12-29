@@ -22,13 +22,18 @@ namespace visus::cuid2 {
         /// Singleton instance with thread-safe initialization.
         ///
         /// @note Defined outside class after type is complete
-        static Counter instance_;
+        static Counter instance;
+
+        /// Generates the initial counter value using cryptographic randomness.
+        ///
+        /// @return A randomly initialized int64_t value to seed the counter
+        static int64_t generate_initial_counter_value();
 
         /// Atomic counter value, safe for concurrent access.
-        std::atomic<int64_t> value_;
+        std::atomic<int64_t> value_{generate_initial_counter_value()};
 
         /// Private constructor, initializes counter with random seed.
-        Counter();
+        Counter() = default;
 
     public:
         /// Returns the next counter value in a thread-safe manner.
@@ -40,7 +45,7 @@ namespace visus::cuid2 {
 
     /// Inline static definition of singleton instance.
     /// Must be defined after the class is complete.
-    inline Counter Counter::instance_{};
+    inline Counter Counter::instance{};
 } // namespace visus::cuid2
 
 #endif // LIBCUID2_COUNTER_HPP

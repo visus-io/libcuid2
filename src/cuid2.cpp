@@ -47,7 +47,7 @@ namespace visus::cuid2 {
         ///
         /// @param buffer Vector to append the serialized bytes to
         /// @param VALUE The 64-bit integer to serialize
-        void serialize_int64_le(std::vector<uint8_t>& buffer, const int64_t VALUE) {
+        [[gnu::noinline]] void serialize_int64_le(std::vector<uint8_t>& buffer, const int64_t VALUE) {
             const auto UNSIGNED_VALUE = static_cast<uint64_t>(VALUE);
             const auto LITTLE_ENDIAN_VALUE = boost::endian::native_to_little(UNSIGNED_VALUE);
             const auto BYTES = std::bit_cast<std::array<uint8_t, sizeof(uint64_t)>>(LITTLE_ENDIAN_VALUE);
@@ -137,9 +137,8 @@ namespace visus::cuid2 {
             }
 
             std::vector<uint8_t> hash_output(EVP_MD_size(EVP_sha3_512()));
-            unsigned int hash_len = 0;
 
-            if (EVP_DigestFinal_ex(CTX.get(), hash_output.data(), &hash_len) != 1) {
+            if (unsigned int hash_len = 0; EVP_DigestFinal_ex(CTX.get(), hash_output.data(), &hash_len) != 1) {
                 throw Cuid2Error("Failed to finalize SHA-3(512) hash");
             }
 
