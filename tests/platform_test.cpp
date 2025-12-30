@@ -11,14 +11,6 @@
 
 BOOST_AUTO_TEST_SUITE(PlatformTests)
 
-BOOST_AUTO_TEST_CASE(test_get_random_int64_generates_values)
-{
-    const int64_t VALUE1 = visus::cuid2::platform::get_random_int64();
-    const int64_t VALUE2 = visus::cuid2::platform::get_random_int64();
-
-    BOOST_TEST(VALUE1 != VALUE2);
-}
-
 BOOST_AUTO_TEST_CASE(test_get_random_int64_produces_varied_values)
 {
     std::set<int64_t> values;

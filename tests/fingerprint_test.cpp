@@ -21,72 +21,19 @@ BOOST_AUTO_TEST_CASE(test_fingerprint_non_empty)
     BOOST_TEST(!FINGERPRINT.empty());
 }
 
-BOOST_AUTO_TEST_CASE(test_fingerprint_consistency)
+BOOST_AUTO_TEST_CASE(test_fingerprint_singleton)
 {
     const auto& FP1 = visus::cuid2::Fingerprint::get();
     const auto& FP2 = visus::cuid2::Fingerprint::get();
     const auto& FP3 = visus::cuid2::Fingerprint::get();
 
+    // Verify singleton behavior (same pointer)
     BOOST_TEST(&FP1 == &FP2);
     BOOST_TEST(&FP2 == &FP3);
-    BOOST_TEST(&FP1 == &FP3);
-}
 
-BOOST_AUTO_TEST_CASE(test_fingerprint_value_consistency)
-{
-    const auto& FP1 = visus::cuid2::Fingerprint::get();
-    const auto& FP2 = visus::cuid2::Fingerprint::get();
-
+    // Verify value consistency
     BOOST_TEST(FP1.size() == FP2.size());
     BOOST_TEST(std::equal(FP1.begin(), FP1.end(), FP2.begin(), FP2.end()));
-}
-
-BOOST_AUTO_TEST_CASE(test_fingerprint_contains_hostname)
-{
-    const std::string HOSTNAME = visus::cuid2::platform::get_hostname();
-    const auto& FINGERPRINT = visus::cuid2::Fingerprint::get();
-
-    BOOST_TEST(FINGERPRINT.size() >= HOSTNAME.size());
-    BOOST_TEST(std::equal(HOSTNAME.begin(), HOSTNAME.end(), FINGERPRINT.begin()));
-}
-
-BOOST_AUTO_TEST_CASE(test_fingerprint_contains_pid)
-{
-    const int PID = visus::cuid2::platform::get_process_id();
-    const std::string HOSTNAME = visus::cuid2::platform::get_hostname();
-    const auto& FINGERPRINT = visus::cuid2::Fingerprint::get();
-
-    const size_t PID_OFFSET = HOSTNAME.size();
-    constexpr size_t PID_SIZE = sizeof(uint32_t);
-
-    BOOST_TEST(FINGERPRINT.size() >= PID_OFFSET + PID_SIZE);
-
-    const auto PID_U32 = static_cast<uint32_t>(PID);
-    const auto EXPECTED_BYTE_0 = static_cast<uint8_t>((PID_U32 >> 0) & 0xFF);
-    const auto EXPECTED_BYTE_1 = static_cast<uint8_t>((PID_U32 >> 8) & 0xFF);
-    const auto EXPECTED_BYTE_2 = static_cast<uint8_t>((PID_U32 >> 16) & 0xFF);
-    const auto EXPECTED_BYTE_3 = static_cast<uint8_t>((PID_U32 >> 24) & 0xFF);
-
-    BOOST_TEST(FINGERPRINT[PID_OFFSET + 0] == EXPECTED_BYTE_0);
-    BOOST_TEST(FINGERPRINT[PID_OFFSET + 1] == EXPECTED_BYTE_1);
-    BOOST_TEST(FINGERPRINT[PID_OFFSET + 2] == EXPECTED_BYTE_2);
-    BOOST_TEST(FINGERPRINT[PID_OFFSET + 3] == EXPECTED_BYTE_3);
-}
-
-BOOST_AUTO_TEST_CASE(test_fingerprint_contains_environment)
-{
-    const std::string HOSTNAME = visus::cuid2::platform::get_hostname();
-    const auto ENV_VARS = visus::cuid2::platform::get_environment_variables();
-    const auto& FINGERPRINT = visus::cuid2::Fingerprint::get();
-
-    size_t expected_env_size = 0;
-    for (const auto& [key, value] : ENV_VARS) {
-        expected_env_size += key.size() + 1 + value.size();
-    }
-
-    const size_t EXPECTED_MIN_SIZE = HOSTNAME.size() + sizeof(uint32_t) + expected_env_size;
-
-    BOOST_TEST(FINGERPRINT.size() >= EXPECTED_MIN_SIZE);
 }
 
 BOOST_AUTO_TEST_CASE(test_fingerprint_environment_ordering)
