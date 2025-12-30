@@ -102,6 +102,10 @@ jobs:
             --exclude '../src/cuid2gen.cpp' \
             --print-summary
 
+          # Remove branch coverage attributes from SonarQube XML
+          # This excludes compiler-generated STL branches that cannot be meaningfully tested
+          sed -i.bak 's/ branchesToCover="[0-9]*"//g; s/ coveredBranches="[0-9]*"//g' coverage.xml
+
       - name: Analyze
         if: github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]'
         uses: SonarSource/sonarqube-scan-action@a31c9398be7ace6bbfaf30c0bd5d415f843d45e9 # v7.0.0
