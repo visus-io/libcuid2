@@ -65,10 +65,7 @@ namespace visus::cuid2 {
         /// @throws std::invalid_argument if length is outside valid range
         void validate_length(const int MAX_LENGTH) {
             if (MAX_LENGTH < MIN_CUID2_LENGTH || MAX_LENGTH > MAX_CUID2_LENGTH) [[unlikely]] {
-                throw std::invalid_argument(
-                    fmt::format("MAX_LENGTH must be between {} and {}",
-                                MIN_CUID2_LENGTH, MAX_CUID2_LENGTH)
-                );
+                throw std::invalid_argument("MAX_LENGTH must be between 4 and 32");
             }
         }
 

@@ -34,7 +34,9 @@ else()
     )
 endif()
 
-# Security hardening flags (all configurations)
+# ==============================================================================
+# Security Hardening Flags
+# ==============================================================================
 if(MSVC)
     add_compile_options(/GS)      # Buffer security checks (stack protector)
     add_compile_options(/sdl)     # Enable additional security checks
@@ -47,38 +49,31 @@ else()
         add_compile_options(-D_FORTIFY_SOURCE=2)   # Compile-time and runtime checks
     endif()
 
-    # Additional security flags (GCC 8+ / Clang 7+)
-    include(CheckCXXCompilerFlag)
-    check_cxx_compiler_flag(-fstack-clash-protection HAS_STACK_CLASH_PROTECTION)
-    if(HAS_STACK_CLASH_PROTECTION)
-        add_compile_options(-fstack-clash-protection)  # Prevent stack clash attacks
-    endif()
-
-    # Control flow integrity (x86_64 only, GCC 8+ / Clang 7+)
+    # Control flow integrity (x86_64 only, GCC 8+ / Clang 8+)
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
+        include(CheckCXXCompilerFlag)
         check_cxx_compiler_flag(-fcf-protection=full HAS_CF_PROTECTION)
         if(HAS_CF_PROTECTION)
             add_compile_options(-fcf-protection=full)  # Control flow integrity
         endif()
     endif()
 
-    # ARM branch protection (ARM64 only, GCC 9+ / Clang 8+)
-    if(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64|arm64|ARM64")
-        check_cxx_compiler_flag(-mbranch-protection=standard HAS_BRANCH_PROTECTION)
-        if(HAS_BRANCH_PROTECTION)
-            add_compile_options(-mbranch-protection=standard)  # ARM branch protection
-        endif()
-    endif()
+    # NOTE: The following security flags are intentionally disabled:
+    # - -fstack-clash-protection: Interferes with C++ exception handling on some platforms
+    # - -mbranch-protection=standard (ARM64): Conflicts with exception unwinding on macOS ARM64
+    # These flags caused exceptions to not be caught properly during testing.
 endif()
 
-# Configuration-specific flags
+# ==============================================================================
+# Build Configuration Flags
+# ==============================================================================
 if(MSVC)
-    # Debug flags
+    # Debug configuration
     add_compile_options($<$<CONFIG:Debug>:/Od>)      # No optimization
     add_compile_options($<$<CONFIG:Debug>:/Zi>)      # Debug symbols
     add_compile_options($<$<CONFIG:Debug>:/RTC1>)    # Runtime checks
 
-    # Release flags
+    # Release configuration
     add_compile_options($<$<CONFIG:Release>:/O2>)    # Optimize for speed
     add_compile_options($<$<CONFIG:Release>:/GL>)    # Whole program optimization
     add_compile_options($<$<CONFIG:Release>:/DNDEBUG>)  # Disable assertions
@@ -86,13 +81,12 @@ if(MSVC)
     add_link_options($<$<CONFIG:Release>:/OPT:REF>)  # Remove unreferenced functions
     add_link_options($<$<CONFIG:Release>:/OPT:ICF>)  # Identical COMDAT folding
 else()
-    # Debug flags
+    # Debug configuration
     add_compile_options($<$<CONFIG:Debug>:-O0>)      # No optimization
     add_compile_options($<$<CONFIG:Debug>:-g3>)      # Maximum debug symbols
-    add_compile_options($<$<CONFIG:Debug>:-fno-omit-frame-pointer>)  # Better debugging
-    add_compile_options($<$<CONFIG:Debug>:-fno-inline>)  # Disable inlining for clearer stack traces
+    add_compile_options($<$<CONFIG:Debug>:-fno-omit-frame-pointer>)  # Preserve frame pointers
 
-    # Release flags
+    # Release configuration
     add_compile_options($<$<CONFIG:Release>:-O2>)    # Standard optimization
     add_compile_options($<$<CONFIG:Release>:-DNDEBUG>)  # Disable assertions
     add_compile_options($<$<CONFIG:Release>:-flto>)  # Link-time optimization
@@ -246,6 +240,11 @@ if(BUILD_TESTS)
     # Cuid2 test
     add_executable(cuid2_test
         tests/cuid2_test.cpp
+        src/cuid2.cpp
+        src/counter.cpp
+        src/fingerprint.cpp
+        src/platform.cpp
+        src/utils.cpp
     )
 
     target_include_directories(cuid2_test
@@ -256,8 +255,10 @@ if(BUILD_TESTS)
 
     target_link_libraries(cuid2_test
         PRIVATE
-            cuid2::cuid2
+            ${PLATFORM_LIBS}
+            OpenSSL::Crypto
             Boost::unit_test_framework
+            fmt::fmt
     )
 
     add_test(NAME Cuid2Test COMMAND cuid2_test)

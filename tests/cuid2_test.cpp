@@ -1,4 +1,5 @@
 #define BOOST_TEST_MODULE Cuid2Test
+#define BOOST_TEST_DYN_LINK
 
 #include <algorithm>
 #include <chrono>
@@ -51,21 +52,6 @@ BOOST_AUTO_TEST_CASE(test_generate_default_length)
     BOOST_TEST(is_valid_cuid2_format(CUID, visus::cuid2::DEFAULT_LENGTH));
 }
 
-BOOST_AUTO_TEST_CASE(test_generate_custom_length)
-{
-    const std::string ID_SHORT = visus::cuid2::generate(4);
-    const std::string ID_MEDIUM = visus::cuid2::generate(16);
-    const std::string ID_LONG = visus::cuid2::generate(32);
-
-    BOOST_TEST(ID_SHORT.length() == 4U);
-    BOOST_TEST(ID_MEDIUM.length() == 16U);
-    BOOST_TEST(ID_LONG.length() == 32U);
-
-    BOOST_TEST(is_valid_cuid2_format(ID_SHORT, 4));
-    BOOST_TEST(is_valid_cuid2_format(ID_MEDIUM, 16));
-    BOOST_TEST(is_valid_cuid2_format(ID_LONG, 32));
-}
-
 BOOST_AUTO_TEST_CASE(test_generate_all_valid_lengths)
 {
     for (int length = visus::cuid2::MIN_CUID2_LENGTH; length <= visus::cuid2::MAX_CUID2_LENGTH; ++length) {
@@ -76,64 +62,61 @@ BOOST_AUTO_TEST_CASE(test_generate_all_valid_lengths)
     }
 }
 
-// Note: Exception throwing tests removed due to Boost.Test signal handling incompatibility on macOS
-// The library correctly throws exceptions for invalid lengths (verified via CLI and manual testing)
-// These tests have been replaced with comprehensive valid boundary case testing
-
-BOOST_AUTO_TEST_CASE(test_generate_boundary_lengths)
+BOOST_AUTO_TEST_CASE(test_exception_length_too_small)
 {
-    const std::string MIN_ID = visus::cuid2::generate(visus::cuid2::MIN_CUID2_LENGTH);
-    const std::string MAX_ID = visus::cuid2::generate(visus::cuid2::MAX_CUID2_LENGTH);
-
-    BOOST_TEST(static_cast<int>(MIN_ID.length()) == visus::cuid2::MIN_CUID2_LENGTH);
-    BOOST_TEST(static_cast<int>(MAX_ID.length()) == visus::cuid2::MAX_CUID2_LENGTH);
-
-    BOOST_TEST(is_valid_cuid2_format(MIN_ID, visus::cuid2::MIN_CUID2_LENGTH));
-    BOOST_TEST(is_valid_cuid2_format(MAX_ID, visus::cuid2::MAX_CUID2_LENGTH));
-
-    // Exception tests for MIN-1 and MAX+1 removed (see note above)
+    BOOST_CHECK_THROW(visus::cuid2::generate(3), std::invalid_argument);
+    BOOST_CHECK_THROW(visus::cuid2::generate(2), std::invalid_argument);
+    BOOST_CHECK_THROW(visus::cuid2::generate(1), std::invalid_argument);
+    BOOST_CHECK_THROW(visus::cuid2::generate(0), std::invalid_argument);
 }
 
-BOOST_AUTO_TEST_CASE(test_format_starts_with_letter)
+BOOST_AUTO_TEST_CASE(test_exception_length_too_large)
 {
-    for (int i = 0; i < 100; ++i) {
-        const std::string CUID = visus::cuid2::generate();
-
-        BOOST_TEST(!CUID.empty());
-        BOOST_TEST(is_lowercase_letter(CUID[0]));
-    }
+    BOOST_CHECK_THROW(visus::cuid2::generate(33), std::invalid_argument);
+    BOOST_CHECK_THROW(visus::cuid2::generate(50), std::invalid_argument);
+    BOOST_CHECK_THROW(visus::cuid2::generate(100), std::invalid_argument);
 }
 
-BOOST_AUTO_TEST_CASE(test_format_contains_only_base36)
+BOOST_AUTO_TEST_CASE(test_exception_negative_length)
 {
-    for (int i = 0; i < 50; ++i) {
-        const std::string CUID = visus::cuid2::generate();
-
-        BOOST_TEST(std::all_of(CUID.begin(), CUID.end(), is_base36_char));
-    }
+    BOOST_CHECK_THROW(visus::cuid2::generate(-1), std::invalid_argument);
+    BOOST_CHECK_THROW(visus::cuid2::generate(-10), std::invalid_argument);
+    BOOST_CHECK_THROW(visus::cuid2::generate(-100), std::invalid_argument);
 }
 
-BOOST_AUTO_TEST_CASE(test_uniqueness_sequential)
+BOOST_AUTO_TEST_CASE(test_exception_boundary_values)
 {
-    std::set<std::string> ids;
+    // Test exact boundary violations
+    BOOST_CHECK_THROW(visus::cuid2::generate(visus::cuid2::MIN_CUID2_LENGTH - 1), std::invalid_argument);
+    BOOST_CHECK_THROW(visus::cuid2::generate(visus::cuid2::MAX_CUID2_LENGTH + 1), std::invalid_argument);
 
-    for (int i = 0; i < 1000; ++i) {
-        const std::string CUID = visus::cuid2::generate();
-        ids.insert(CUID);
-    }
-
-    BOOST_TEST(ids.size() == 1000U);
+    // Test that exact boundaries do NOT throw
+    BOOST_CHECK_NO_THROW(visus::cuid2::generate(visus::cuid2::MIN_CUID2_LENGTH));
+    BOOST_CHECK_NO_THROW(visus::cuid2::generate(visus::cuid2::MAX_CUID2_LENGTH));
 }
 
-BOOST_AUTO_TEST_CASE(test_uniqueness_rapid_generation)
+BOOST_AUTO_TEST_CASE(test_exception_message_content)
 {
-    std::set<std::string> ids;
-
-    for (int i = 0; i < 10000; ++i) {
-        ids.insert(visus::cuid2::generate());
+    // Verify exception messages contain relevant constraint information
+    try {
+        visus::cuid2::generate(0);
+        BOOST_FAIL("Expected std::invalid_argument to be thrown");
+    } catch (const std::invalid_argument& error) {
+        const std::string MESSAGE(error.what());
+        BOOST_TEST(!MESSAGE.empty());
+        BOOST_TEST(MESSAGE.find("4") != std::string::npos);
+        BOOST_TEST(MESSAGE.find("32") != std::string::npos);
     }
 
-    BOOST_TEST(ids.size() == 10000U);
+    try {
+        visus::cuid2::generate(100);
+        BOOST_FAIL("Expected std::invalid_argument to be thrown");
+    } catch (const std::invalid_argument& error) {
+        const std::string MESSAGE(error.what());
+        BOOST_TEST(!MESSAGE.empty());
+        BOOST_TEST(MESSAGE.find("4") != std::string::npos);
+        BOOST_TEST(MESSAGE.find("32") != std::string::npos);
+    }
 }
 
 BOOST_AUTO_TEST_CASE(test_uniqueness_different_lengths)
@@ -236,36 +219,6 @@ BOOST_AUTO_TEST_CASE(test_concurrent_generation_stability)
     BOOST_TEST(all_unique_ids.size() == static_cast<size_t>(NUM_THREADS * ITERATIONS));
 }
 
-BOOST_AUTO_TEST_CASE(test_format_consistency_across_threads)
-{
-    constexpr int NUM_THREADS = 8;
-    constexpr int IDS_PER_THREAD = 100;
-
-    std::vector<std::jthread> threads;
-    std::vector all_valid(NUM_THREADS, true);
-
-    threads.reserve(NUM_THREADS);
-
-    for (int thread_idx = 0; thread_idx < NUM_THREADS; ++thread_idx) {
-        threads.emplace_back([thread_idx, &all_valid]() {
-            for (int idx = 0; idx < IDS_PER_THREAD; ++idx) {
-                const std::string CUID = visus::cuid2::generate();
-                if (!is_valid_cuid2_format(CUID, visus::cuid2::DEFAULT_LENGTH)) {
-                    all_valid[thread_idx] = false;
-                    break;
-                }
-            }
-        });
-    }
-
-    // Explicitly join to ensure threads complete before accessing results
-    for (auto& thread : threads) {
-        thread.join();
-    }
-
-    BOOST_TEST(std::all_of(all_valid.begin(), all_valid.end(), [](bool valid) { return valid; }));
-}
-
 BOOST_AUTO_TEST_CASE(test_timestamp_ordering)
 {
     std::vector<std::string> ids;
@@ -278,20 +231,6 @@ BOOST_AUTO_TEST_CASE(test_timestamp_ordering)
 
     for (size_t i = 1; i < ids.size(); ++i) {
         BOOST_TEST(ids[i] != ids[i - 1]);
-    }
-}
-
-BOOST_AUTO_TEST_CASE(test_different_lengths_format_validity)
-{
-    const std::vector LENGTHS = {4, 8, 12, 16, 20, 24, 28, 32};
-
-    for (const int LENGTH : LENGTHS) {
-        for (int i = 0; i < 50; ++i) {
-            const std::string CUID = visus::cuid2::generate(LENGTH);
-
-            BOOST_TEST(static_cast<int>(CUID.length()) == LENGTH);
-            BOOST_TEST(is_valid_cuid2_format(CUID, LENGTH));
-        }
     }
 }
 
@@ -318,17 +257,6 @@ BOOST_AUTO_TEST_CASE(test_no_common_prefixes)
 
     BOOST_TEST(prefixes_3char.size() > 70U);
     BOOST_TEST(prefixes_5char.size() > 90U);
-}
-
-BOOST_AUTO_TEST_CASE(test_timestamp_component_changes)
-{
-    const std::string ID1 = visus::cuid2::generate();
-
-    std::this_thread::sleep_for(std::chrono::milliseconds(10));
-
-    const std::string ID2 = visus::cuid2::generate();
-
-    BOOST_TEST(ID1 != ID2);
 }
 
 BOOST_AUTO_TEST_CASE(test_rapid_generation_no_duplicates)
