@@ -21,14 +21,18 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-and-analyze:
-    name: Build & Analyze
-    runs-on: ubuntu-latest
+  build-and-test:
+    name: Build & Test (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 30
     permissions:
       contents: read
       actions: read
       packages: write
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
     env:
       VCPKG_BINARY_SOURCES: 'clear;x-gha,readwrite'
 
@@ -44,7 +48,8 @@ jobs:
           cmakeVersion: '~4.2.0'
           ninjaVersion: '^1.12.0'
 
-      - name: Install dependencies
+      - name: Install Linux dependencies
+        if: runner.os == 'Linux'
         run: |
           sudo apt-get update
           sudo apt-get install -y \
@@ -58,7 +63,8 @@ jobs:
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@5e0cab206a5ea620130caf672fce3e4a6b5666a1 # v11.5
 
-      - name: Configure
+      - name: Configure (Linux)
+        if: runner.os == 'Linux'
         run: |
           cmake -B build \
             -G Ninja \
@@ -70,13 +76,21 @@ jobs:
             -DVCPKG_OVERLAY_PORTS=${{ github.workspace }}/cmake/vcpkg/ports \
             -DVCPKG_OVERLAY_TRIPLETS=${{ github.workspace }}/cmake/vcpkg/triplets
 
-      - name: Build
+      - name: Configure (Windows)
+        if: runner.os == 'Windows'
         run: |
-          echo "Checking CMake coverage configuration..."
-          grep -i "coverage" build/CMakeCache.txt || echo "No coverage settings found in CMakeCache.txt"
-          cmake --build build
+          cmake -B build `
+            -G Ninja `
+            -DCMAKE_BUILD_TYPE=Debug `
+            -DCMAKE_EXPORT_COMPILE_COMMANDS=ON `
+            -DBUILD_TESTS=ON `
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT/scripts/buildsystems/vcpkg.cmake"
 
-      - name: Verify linkage
+      - name: Build
+        run: cmake --build build
+
+      - name: Verify Linux linkage
+        if: runner.os == 'Linux'
         run: |
           echo "Checking library dependencies..."
           ldd build/libcuid2.so | grep -E "(openssl|boost|fmt)" || echo "No system libraries found in ldd output"
@@ -93,6 +107,7 @@ jobs:
         run: ctest --test-dir build --output-on-failure
 
       - name: Coverage
+        if: runner.os == 'Linux'
         run: |
           cd build
           gcovr . \
@@ -106,8 +121,36 @@ jobs:
           # This excludes compiler-generated STL branches that cannot be meaningfully tested
           sed -i.bak 's/ branchesToCover="[0-9]*"//g; s/ coveredBranches="[0-9]*"//g' coverage.xml
 
+      - name: Upload coverage artifact
+        if: runner.os == 'Linux'
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: coverage-report
+          path: build/coverage.xml
+          retention-days: 1
+
+  sonar-analyze:
+    name: SonarQube Analysis
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]'
+    timeout-minutes: 10
+    permissions:
+      contents: read
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v6.0.1
+        with:
+          fetch-depth: 0
+
+      - name: Download coverage artifact
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: coverage-report
+          path: build/
+
       - name: Analyze
-        if: github.actor != 'dependabot[bot]' && github.actor != 'renovate[bot]'
         uses: SonarSource/sonarqube-scan-action@a31c9398be7ace6bbfaf30c0bd5d415f843d45e9 # v7.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
