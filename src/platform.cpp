@@ -43,6 +43,7 @@ namespace visus::cuid2::platform {
         /// from the CSPRNG and formats them as a 16-character hexadecimal string.
         ///
         /// @return A random hex string suitable as a hostname fallback
+        // GCOVR_EXCL_START - gethostname() virtually never fails on modern systems
         auto generate_random_hostname() -> std::string {
             constexpr size_t RANDOM_BYTES = 8;
             std::array<unsigned char, RANDOM_BYTES> random_bytes{};
@@ -57,6 +58,7 @@ namespace visus::cuid2::platform {
 
             return result;
         }
+        // GCOVR_EXCL_STOP
     } // anonymous namespace
 
     /// Fills a buffer with cryptographically secure random bytes.
@@ -203,7 +205,9 @@ namespace visus::cuid2::platform {
             return hostname.data();
         }
 
+        // GCOVR_EXCL_START - Fallback path for hostname retrieval failure
         return generate_random_hostname();
+        // GCOVR_EXCL_STOP
     }
 
     /// Retrieves all environment variables as key-value pairs (POSIX).

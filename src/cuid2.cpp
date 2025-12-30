@@ -121,23 +121,31 @@ namespace visus::cuid2 {
             };
 
             const std::unique_ptr<EVP_MD_CTX, EVPContextDeleter> CTX(EVP_MD_CTX_new());
+            // GCOVR_EXCL_START - Cannot reliably trigger memory exhaustion in tests
             if (!CTX) [[unlikely]] {
                 throw Cuid2Error("Failed to create SHA-3(512) hash context");
             }
+            // GCOVR_EXCL_STOP
 
+            // GCOVR_EXCL_START - EVP_sha3_512() is always valid, cannot trigger failure
             if (EVP_DigestInit_ex(CTX.get(), EVP_sha3_512(), nullptr) != 1) {
                 throw Cuid2Error("Failed to initialize SHA-3(512) hash");
             }
+            // GCOVR_EXCL_STOP
 
+            // GCOVR_EXCL_START - Cannot trigger with valid context, defensive check only
             if (EVP_DigestUpdate(CTX.get(), input.data(), input.size()) != 1) {
                 throw Cuid2Error("Failed to update SHA-3(512) hash");
             }
+            // GCOVR_EXCL_STOP
 
             std::vector<uint8_t> hash_output(EVP_MD_size(EVP_sha3_512()));
 
+            // GCOVR_EXCL_START - Cannot trigger with valid context, defensive check only
             if (unsigned int hash_len = 0; EVP_DigestFinal_ex(CTX.get(), hash_output.data(), &hash_len) != 1) {
                 throw Cuid2Error("Failed to finalize SHA-3(512) hash");
             }
+            // GCOVR_EXCL_STOP
 
             return hash_output;
         }
@@ -161,7 +169,9 @@ namespace visus::cuid2 {
             if (const size_t NEEDED_LENGTH = MAX_LENGTH - PREFIX_LENGTH; ENCODED.length() >= NEEDED_LENGTH) [[likely]] {
                 result += ENCODED.substr(0, NEEDED_LENGTH);
             } else {
+                // GCOVR_EXCL_START - SHA3-512 base-36 encoding always exceeds MAX_LENGTH
                 result += ENCODED;
+                // GCOVR_EXCL_STOP
             }
 
             return result;
