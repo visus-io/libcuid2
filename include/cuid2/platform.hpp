@@ -8,6 +8,7 @@
 #ifndef LIBCUID2_PLATFORM_HPP
 #define LIBCUID2_PLATFORM_HPP
 
+#include <cstdint>
 #include <functional>
 #include <map>
 #include <string>
