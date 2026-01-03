@@ -32,6 +32,10 @@
 #include <fmt/core.h>
 
 namespace visus::cuid2 {
+    Cuid2Error::Cuid2Error(const char* message) : std::runtime_error(message) {}
+
+    Cuid2Error::Cuid2Error(const std::string& message) : std::runtime_error(message) {}
+
     namespace {
         /// Combined size of timestamp and counter in bytes (8 bytes each).
         constexpr size_t TIMESTAMP_COUNTER_SIZE = sizeof(int64_t) * 2;
