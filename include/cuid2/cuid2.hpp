@@ -19,6 +19,7 @@
 #ifndef LIBCUID2_CUID2_HPP
 #define LIBCUID2_CUID2_HPP
 
+#include <cuid2/cuid2_export.hpp>
 #include <stdexcept>
 #include <string>
 
@@ -29,9 +30,13 @@ namespace visus::cuid2 {
     /// CUID2 generation, such as SHA3-512 hash context creation or computation.
     /// These failures are extremely rare in practice and typically indicate
     /// system-level issues with the cryptographic library.
-    class Cuid2Error : public std::runtime_error {
+    class CUID2_API Cuid2Error : public std::runtime_error {
     public:
-        using std::runtime_error::runtime_error;
+        /// Construct exception with C-string error message
+        explicit Cuid2Error(const char* message);
+
+        /// Construct exception with std::string error message
+        explicit Cuid2Error(const std::string& message);
     };
     /// Default CUID2 identifier length in characters.
     /// Provides a good balance between compactness and collision resistance.
@@ -62,7 +67,7 @@ namespace visus::cuid2 {
     /// @throws std::invalid_argument if MAX_LENGTH is outside valid range [4, 32]
     /// @throws Cuid2Error if cryptographic operations fail (extremely rare)
     /// @note Thread-safe: Can be called concurrently from multiple threads
-    std::string generate(int MAX_LENGTH = DEFAULT_LENGTH);
+    CUID2_API std::string generate(int MAX_LENGTH = DEFAULT_LENGTH);
 } // namespace visus::cuid2
 
 #endif //LIBCUID2_CUID2_HPP

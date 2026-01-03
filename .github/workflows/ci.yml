@@ -33,8 +33,6 @@ jobs:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
-    env:
-      VCPKG_BINARY_SOURCES: 'clear;x-gha,readwrite'
 
     steps:
       - name: Checkout
@@ -60,8 +58,38 @@ jobs:
             python3-pip
           pip3 install gcovr==8.4
 
+      - name: Setup vcpkg binary cache path
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then
+            echo "VCPKG_DEFAULT_BINARY_CACHE=$GITHUB_WORKSPACE/.vcpkg/bincache" >> $GITHUB_ENV
+          else
+            echo "VCPKG_DEFAULT_BINARY_CACHE=$HOME/.cache/vcpkg" >> $GITHUB_ENV
+          fi
+
+      - name: Cache vcpkg binary packages
+        uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
+        with:
+          path: ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
+          key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-
+
+      - name: Create vcpkg binary cache directory (Linux)
+        if: runner.os == 'Linux'
+        run: mkdir -p "$VCPKG_DEFAULT_BINARY_CACHE"
+
+      - name: Create vcpkg binary cache directory (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: New-Item -ItemType Directory -Force -Path "$env:VCPKG_DEFAULT_BINARY_CACHE" | Out-Null
+
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@5e0cab206a5ea620130caf672fce3e4a6b5666a1 # v11.5
+
+      - name: Setup MSVC (Windows)
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@0b201ec74fa43914dc39ae48a89fd1d8cb592756 # v1.13.0
 
       - name: Configure (Linux)
         if: runner.os == 'Linux'
