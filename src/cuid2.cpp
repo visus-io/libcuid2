@@ -32,10 +32,6 @@
 #include <fmt/core.h>
 
 namespace visus::cuid2 {
-    Cuid2Error::Cuid2Error(const char* message) : std::runtime_error(message) {}
-
-    Cuid2Error::Cuid2Error(const std::string& message) : std::runtime_error(message) {}
-
     namespace {
         /// Combined size of timestamp and counter in bytes (8 bytes each).
         constexpr size_t TIMESTAMP_COUNTER_SIZE = sizeof(int64_t) * 2;
@@ -114,7 +110,6 @@ namespace visus::cuid2 {
         ///
         /// @param input Byte vector to hash
         /// @return 64-byte SHA3-512 hash output
-        /// @throws Cuid2Error if OpenSSL operations fail
         [[nodiscard]] std::vector<uint8_t> compute_hash(const std::vector<uint8_t>& input) {
             /// RAII deleter for OpenSSL EVP_MD_CTX context.
             /// Ensures EVP_MD_CTX_free() is called when the unique_ptr goes out of scope.
@@ -125,31 +120,15 @@ namespace visus::cuid2 {
             };
 
             const std::unique_ptr<EVP_MD_CTX, EVPContextDeleter> CTX(EVP_MD_CTX_new());
-            // GCOVR_EXCL_START - Cannot reliably trigger memory exhaustion in tests
-            if (!CTX) [[unlikely]] {
-                throw Cuid2Error("Failed to create SHA-3(512) hash context");
-            }
-            // GCOVR_EXCL_STOP
 
-            // GCOVR_EXCL_START - EVP_sha3_512() is always valid, cannot trigger failure
-            if (EVP_DigestInit_ex(CTX.get(), EVP_sha3_512(), nullptr) != 1) {
-                throw Cuid2Error("Failed to initialize SHA-3(512) hash");
-            }
-            // GCOVR_EXCL_STOP
-
-            // GCOVR_EXCL_START - Cannot trigger with valid context, defensive check only
-            if (EVP_DigestUpdate(CTX.get(), input.data(), input.size()) != 1) {
-                throw Cuid2Error("Failed to update SHA-3(512) hash");
-            }
-            // GCOVR_EXCL_STOP
+            EVP_DigestInit_ex(CTX.get(), EVP_sha3_512(), nullptr);
+            EVP_DigestUpdate(CTX.get(), input.data(), input.size());
 
             std::vector<uint8_t> hash_output(EVP_MD_size(EVP_sha3_512()));
 
-            // GCOVR_EXCL_START - Cannot trigger with valid context, defensive check only
-            if (unsigned int hash_len = 0; EVP_DigestFinal_ex(CTX.get(), hash_output.data(), &hash_len) != 1) {
-                throw Cuid2Error("Failed to finalize SHA-3(512) hash");
-            }
-            // GCOVR_EXCL_STOP
+            unsigned int hash_len = 0;
+
+            EVP_DigestFinal_ex(CTX.get(), hash_output.data(), &hash_len);
 
             return hash_output;
         }
@@ -197,7 +176,6 @@ namespace visus::cuid2 {
     /// @param MAX_LENGTH Desired identifier length (default: 24, min: 4, max: 32)
     /// @return A CUID2 identifier string of exact length MAX_LENGTH
     /// @throws std::invalid_argument if MAX_LENGTH is outside valid range [4, 32]
-    /// @throws Cuid2Error if cryptographic operations fail (extremely rare)
     /// @note Thread-safe: Can be called concurrently from multiple threads
     std::string generate(const int MAX_LENGTH) {
         validate_length(MAX_LENGTH);
