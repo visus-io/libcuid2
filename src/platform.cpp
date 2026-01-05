@@ -84,8 +84,11 @@ namespace visus::cuid2::platform {
     /// @return A cryptographically random int64_t value
     /// @note Thread-safe: Can be called concurrently from multiple threads
     int64_t get_random_int64() noexcept {
-        std::array<unsigned char, sizeof(int64_t)> bytes{};
-        RAND_bytes(bytes.data(), bytes.size());
+        constexpr int BYTES_SIZE = sizeof(int64_t);
+
+        std::array<unsigned char, BYTES_SIZE> bytes{};
+        RAND_bytes(bytes.data(), BYTES_SIZE);
+
         return std::bit_cast<int64_t>(bytes);
     }
 

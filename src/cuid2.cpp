@@ -47,7 +47,7 @@ namespace visus::cuid2 {
         ///
         /// @param buffer Vector to append the serialized bytes to
         /// @param VALUE The 64-bit integer to serialize
-        [[gnu::noinline]] void serialize_int64_le(std::vector<uint8_t>& buffer, const int64_t VALUE) {
+        void serialize_int64_le(std::vector<uint8_t>& buffer, const int64_t VALUE) {
             const auto UNSIGNED_VALUE = static_cast<uint64_t>(VALUE);
             const auto LITTLE_ENDIAN_VALUE = boost::endian::native_to_little(UNSIGNED_VALUE);
             const auto BYTES = std::bit_cast<std::array<uint8_t, sizeof(uint64_t)>>(LITTLE_ENDIAN_VALUE);
