@@ -58,31 +58,32 @@ jobs:
             python3-pip
           pip3 install gcovr==8.4
 
-      - name: Setup vcpkg binary cache path
-        shell: bash
-        run: |
-          if [ "$RUNNER_OS" == "Windows" ]; then
-            echo "VCPKG_DEFAULT_BINARY_CACHE=$GITHUB_WORKSPACE/.vcpkg/bincache" >> $GITHUB_ENV
-          else
-            echo "VCPKG_DEFAULT_BINARY_CACHE=$HOME/.cache/vcpkg" >> $GITHUB_ENV
-          fi
-
-      - name: Cache vcpkg binary packages
-        uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
-        with:
-          path: ${{ env.VCPKG_DEFAULT_BINARY_CACHE }}
-          key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json') }}
-          restore-keys: |
-            vcpkg-${{ runner.os }}-
-
-      - name: Create vcpkg binary cache directory (Linux)
-        if: runner.os == 'Linux'
-        run: mkdir -p "$VCPKG_DEFAULT_BINARY_CACHE"
-
-      - name: Create vcpkg binary cache directory (Windows)
+      - name: Setup vcpkg binary cache (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
-        run: New-Item -ItemType Directory -Force -Path "$env:VCPKG_DEFAULT_BINARY_CACHE" | Out-Null
+        run: |
+          $cachePath = "$env:USERPROFILE\AppData\Local\vcpkg\archives"
+          echo "VCPKG_BINARY_SOURCES=files,$cachePath,readwrite" >> $env:GITHUB_ENV
+
+      - name: Setup vcpkg binary cache (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          echo "VCPKG_BINARY_SOURCES=files,$HOME/.cache/vcpkg/archives,readwrite" >> $GITHUB_ENV
+
+      - name: Cache vcpkg (Windows)
+        if: runner.os == 'Windows'
+        uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
+        with:
+          path: ~/AppData/Local/vcpkg/archives
+          key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json') }}
+
+      - name: Cache vcpkg (Linux)
+        if: runner.os == 'Linux'
+        uses: actions/cache@9255dc7a253b0ccc959486e2bca901246202afeb # v5.0.1
+        with:
+          path: ~/.cache/vcpkg/archives
+          key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json', 'vcpkg-configuration.json') }}
 
       - name: Setup vcpkg
         uses: lukka/run-vcpkg@5e0cab206a5ea620130caf672fce3e4a6b5666a1 # v11.5
@@ -149,12 +150,14 @@ jobs:
           # This excludes compiler-generated STL branches that cannot be meaningfully tested
           sed -i.bak 's/ branchesToCover="[0-9]*"//g; s/ coveredBranches="[0-9]*"//g' coverage.xml
 
-      - name: Upload coverage artifact
+      - name: Upload SonarQube artifacts
         if: runner.os == 'Linux'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: coverage-report
-          path: build/coverage.xml
+          name: sonarqube-artifacts
+          path: |
+            build/coverage.xml
+            build/compile_commands.json
           retention-days: 1
 
   sonar-analyze:
@@ -172,10 +175,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Download coverage artifact
+      - name: Download SonarQube artifacts
         uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
         with:
-          name: coverage-report
+          name: sonarqube-artifacts
           path: build/
 
       - name: Analyze
