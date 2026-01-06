@@ -3,41 +3,61 @@
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/visus-io/libcuid2/ci.yml?style=for-the-badge&logo=github)](https://github.com/visus-io/libcuid2/actions/workflows/ci.yaml)
 [![Sonar Quality Gate](https://img.shields.io/sonar/quality_gate/visus%3Alibcuid2?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge&logo=sonarcloud&logoColor=white)](https://sonarcloud.io/summary/overall?id=visus%3Alibcuid2)
 [![Sonar Coverage](https://img.shields.io/sonar/coverage/visus%3Alibcuid2?server=https%3A%2F%2Fsonarcloud.io&style=for-the-badge&logo=sonarcloud&logoColor=white)](https://sonarcloud.io/summary/overall?id=visus%3Alibcuid2)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+![GitHub License](https://img.shields.io/github/license/visus-io/libcuid2?style=for-the-badge)
 
 A high-performance C++ implementation of the [Cuid2](https://github.com/paralleldrive/cuid2) specification for generating collision-resistant, sortable unique identifiers using cryptographic primitives.
 
 <details>
 <summary><strong>Table of Contents</strong></summary>
 
-- [Features](#features)
-- [Quick Start](#quick-start)
-- [Installation](#installation)
-  - [System Dependencies](#system-dependencies)
-  - [vcpkg Setup](#vcpkg-setup)
-  - [Build from Source](#build-from-source)
-  - [Debian/Ubuntu Packages](#debianubuntu-packages)
-- [Usage](#usage)
-  - [Command-Line Tool](#command-line-tool)
-  - [Library API](#library-api)
-  - [CMake Integration](#cmake-integration)
-- [Algorithm](#algorithm)
-- [Documentation](#documentation)
-  - [Manual Pages](#manual-pages)
-  - [Internationalization](#internationalization)
-  - [API Documentation](#api-documentation)
-- [Testing](#testing)
-  - [Test Coverage](#test-coverage)
-- [Platform Support](#platform-support)
-- [Requirements](#requirements)
-- [Architecture](#architecture)
-  - [Platform Abstraction Layer](#platform-abstraction-layer)
-  - [Cryptography](#cryptography)
-  - [Thread Safety](#thread-safety)
-- [Contributing](#contributing)
-  - [Development Workflow](#development-workflow)
-  - [Code Quality Standards](#code-quality-standards)
-- [Additional Documentation](#additional-documentation)
+- [libcuid2](#libcuid2)
+  - [Features](#features)
+  - [Quick Start](#quick-start)
+  - [Installation](#installation)
+    - [CMake 4 Installation](#cmake-4-installation)
+      - [Checking Your CMake Version](#checking-your-cmake-version)
+      - [Ubuntu/Debian](#ubuntudebian)
+      - [Fedora/RHEL](#fedorarhel)
+      - [Arch Linux](#arch-linux)
+      - [macOS](#macos)
+      - [FreeBSD](#freebsd)
+      - [OpenBSD/NetBSD](#openbsdnetbsd)
+      - [Windows](#windows)
+    - [System Dependencies](#system-dependencies)
+      - [macOS](#macos-1)
+      - [Ubuntu/Debian](#ubuntudebian-1)
+      - [Fedora/RHEL](#fedorarhel-1)
+      - [Arch Linux](#arch-linux-1)
+      - [FreeBSD](#freebsd-1)
+      - [Windows](#windows-1)
+    - [vcpkg Setup](#vcpkg-setup)
+    - [Build from Source](#build-from-source)
+      - [CMake Presets](#cmake-presets)
+    - [Debian/Ubuntu Packages](#debianubuntu-packages)
+  - [Usage](#usage)
+    - [Command-Line Tool](#command-line-tool)
+    - [Library API](#library-api)
+      - [Basic Usage](#basic-usage)
+      - [Error Handling](#error-handling)
+      - [Thread-Safe Concurrent Generation](#thread-safe-concurrent-generation)
+    - [CMake Integration](#cmake-integration)
+  - [Algorithm](#algorithm)
+  - [Documentation](#documentation)
+    - [Manual Pages](#manual-pages)
+    - [Internationalization](#internationalization)
+    - [API Documentation](#api-documentation)
+  - [Testing](#testing)
+    - [Test Coverage](#test-coverage)
+  - [Platform Support](#platform-support)
+  - [Requirements](#requirements)
+  - [Architecture](#architecture)
+    - [Platform Abstraction Layer](#platform-abstraction-layer)
+    - [Cryptography](#cryptography)
+    - [Thread Safety](#thread-safety)
+  - [Contributing](#contributing)
+    - [Development Workflow](#development-workflow)
+    - [Code Quality Standards](#code-quality-standards)
+  - [Additional Documentation](#additional-documentation)
 
 </details>
 
@@ -75,6 +95,124 @@ int main() {
 ```
 
 ## Installation
+
+### CMake 4 Installation
+
+This project requires **CMake 4.0+**. Many Linux distributions currently ship with CMake 3.x by default, so you may need to install CMake 4 manually.
+
+#### Checking Your CMake Version
+```bash
+cmake --version
+```
+
+#### Ubuntu/Debian
+
+Ubuntu 24.04 LTS and earlier Debian versions ship with CMake 3.x. You have two options:
+
+**Option 1: Install from Kitware APT Repository (Recommended)**
+```bash
+# Remove old CMake if installed
+sudo apt-get remove --purge cmake
+
+# Install dependencies
+sudo apt-get update
+sudo apt-get install -y software-properties-common lsb-release wget gnupg
+
+# Add Kitware APT repository
+wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
+sudo apt-add-repository "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main"
+
+# Install CMake 4
+sudo apt-get update
+sudo apt-get install cmake
+
+# Verify installation
+cmake --version
+```
+
+**Option 2: Build from Source**
+```bash
+# Install build dependencies
+sudo apt-get install -y build-essential libssl-dev
+
+# Download and build CMake 4 (adjust version as needed)
+wget https://github.com/Kitware/CMake/releases/download/v4.0.0/cmake-4.0.0.tar.gz
+tar -xzf cmake-4.0.0.tar.gz
+cd cmake-4.0.0
+./bootstrap --prefix=/usr/local
+make -j$(nproc)
+sudo make install
+
+# Verify installation
+cmake --version
+```
+
+#### Fedora/RHEL
+
+Fedora 41+ includes CMake 4.x. For older versions:
+```bash
+# Fedora 41+
+sudo dnf install cmake
+
+# For older Fedora/RHEL, build from source (see Ubuntu Option 2 above)
+# Replace apt-get with dnf/yum for build dependencies:
+sudo dnf install -y gcc-c++ make openssl-devel
+```
+
+#### Arch Linux
+```bash
+# Arch typically has latest CMake in official repos
+sudo pacman -S cmake
+```
+
+#### macOS
+```bash
+# Homebrew
+brew install cmake
+
+# Verify installation
+cmake --version
+```
+
+#### FreeBSD
+```bash
+# CMake 4 may be available in ports/packages
+pkg install cmake
+
+# If not available, build from ports:
+cd /usr/ports/devel/cmake && make install clean
+```
+
+#### OpenBSD/NetBSD
+```bash
+# Check available version
+pkg_info -Q cmake  # OpenBSD
+pkgin search cmake # NetBSD
+
+# Install if CMake 4 is available
+pkg_add cmake      # OpenBSD
+pkgin install cmake # NetBSD
+
+# Otherwise, build from source (see Ubuntu Option 2 above)
+```
+
+#### Windows
+
+CMake 4 is available via the official installer:
+
+**Option 1: Official Installer**
+- Download from https://cmake.org/download/
+- Run the installer and add CMake to system PATH
+
+**Option 2: Chocolatey**
+```powershell
+choco install cmake
+```
+
+**Option 3: Winget**
+```powershell
+winget install Kitware.CMake
+```
 
 ### System Dependencies
 
@@ -168,12 +306,18 @@ cmake --preset freebsd-arm64-debug
 
 ### Debian/Ubuntu Packages
 
+**Note:** Building DEB packages requires CMake 4.0+. See [CMake 4 Installation](#cmake-4-installation) above if you don't have it installed.
+
 Build DEB packages:
 ```bash
-sudo apt-get install debhelper-compat cmake pkg-config \
+# Install build dependencies (assuming CMake 4 is already installed)
+sudo apt-get install debhelper-compat pkg-config \
     libssl-dev libboost-dev libfmt-dev
 
+# Build packages
 dpkg-buildpackage -us -uc -b
+
+# Install packages
 sudo dpkg -i ../libcuid2-0_*.deb ../libcuid2-dev_*.deb ../cuid2gen_*.deb
 ```
 
