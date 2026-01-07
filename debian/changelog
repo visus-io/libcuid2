@@ -1,4 +1,4 @@
-libcuid2 (0.0.1-1ubuntu1~noble1) noble; urgency=medium
+libcuid2 (1.0.0-1ubuntu1~noble1) noble; urgency=medium
 
   * Initial release for Ubuntu 24.04 LTS (Noble Numbat)
   * C++ implementation of Cuid2 identifier generation
@@ -9,7 +9,7 @@ libcuid2 (0.0.1-1ubuntu1~noble1) noble; urgency=medium
 
  -- Visus Development Team <admin@projects.visus.io>  Sun, 28 Dec 2025 12:00:00 +0000
 
-libcuid2 (0.0.1-1ubuntu1~jammy1) jammy; urgency=medium
+libcuid2 (1.0.0-1ubuntu1~jammy1) jammy; urgency=medium
 
   * Initial release for Ubuntu 22.04 LTS (Jammy Jellyfish)
   * C++ implementation of Cuid2 identifier generation
@@ -20,7 +20,7 @@ libcuid2 (0.0.1-1ubuntu1~jammy1) jammy; urgency=medium
 
  -- Visus Development Team <admin@projects.visus.io>  Sun, 28 Dec 2025 12:00:00 +0000
 
-libcuid2 (0.0.1-1ubuntu1~focal1) focal; urgency=medium
+libcuid2 (1.0.0-1ubuntu1~focal1) focal; urgency=medium
 
   * Initial release for Ubuntu 20.04 LTS (Focal Fossa)
   * C++ implementation of Cuid2 identifier generation

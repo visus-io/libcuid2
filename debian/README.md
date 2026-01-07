@@ -47,9 +47,9 @@ debuild -us -uc -b
 ```
 
 The built packages will be created in the parent directory:
-- `libcuid2-0_0.0.1-1_<arch>.deb`
-- `libcuid2-dev_0.0.1-1_<arch>.deb`
-- `cuid2gen_0.0.1-1_<arch>.deb`
+- `libcuid2-0_1.0.0-1_<arch>.deb`
+- `libcuid2-dev_1.0.0-1_<arch>.deb`
+- `cuid2gen_1.0.0-1_<arch>.deb`
 
 ### Installing Locally
 
@@ -268,7 +268,7 @@ For a single Ubuntu release:
 
 ```bash
 # 1. Create orig tarball
-git archive --format=tar --prefix=libcuid2-0.0.1/ HEAD | xz -9 > ../libcuid2_0.0.1.orig.tar.xz
+git archive --format=tar --prefix=libcuid2-1.0.0/ HEAD | xz -9 > ../libcuid2_1.0.0.orig.tar.xz
 
 # 2. Build source package for Noble (24.04)
 debuild -S -sa -k<YOUR_GPG_KEY_ID>
@@ -345,7 +345,7 @@ If you built unsigned packages, sign them before uploading:
 debsign -k<YOUR_GPG_KEY_ID> ../build-area/libcuid2_*_source.changes
 
 # Or sign individually
-debsign -k<YOUR_GPG_KEY_ID> ../build-area/libcuid2_0.0.1-1ubuntu1~noble1_source.changes
+debsign -k<YOUR_GPG_KEY_ID> ../build-area/libcuid2_1.0.0-1ubuntu1~noble1_source.changes
 ```
 
 ### Testing PPA Builds Locally
@@ -371,9 +371,9 @@ pbuilder-dist focal build ../build-area/libcuid2_*~focal1.dsc
 
 Version format: `UPSTREAM_VERSION-DEBIAN_REVISION~ubuntuX~CODENAME1`
 
-Example: `0.0.1-1ubuntu1~noble1`
+Example: `1.0.0-1ubuntu1~noble1`
 
-- `0.0.1` - Upstream version
+- `1.0.0` - Upstream version
 - `-1` - Debian revision
 - `ubuntu1` - Ubuntu revision
 - `~noble1` - Release-specific revision (tilde ensures upgrade path)
@@ -385,10 +385,10 @@ When updating:
 dch -v 0.0.2-1ubuntu1~noble1 "New upstream release"
 
 # Bug fix for existing version
-dch -v 0.0.1-1ubuntu2~noble1 "Fix build on Noble"
+dch -v 1.0.0-1ubuntu2~noble1 "Fix build on Noble"
 
 # Update across releases
-dch -v 0.0.1-1ubuntu1~jammy2 "Rebuild for Jammy dependencies"
+dch -v 1.0.0-1ubuntu1~jammy2 "Rebuild for Jammy dependencies"
 ```
 
 ### Troubleshooting PPA Builds

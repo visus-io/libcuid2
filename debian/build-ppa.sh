@@ -2,7 +2,7 @@
 set -e
 
 PACKAGE_NAME="libcuid2"
-VERSION="0.0.1"
+VERSION="1.0.0"
 REVISION="1ubuntu1"
 RELEASES=("noble" "jammy" "focal")
 BUILD_AREA="../build-area"
