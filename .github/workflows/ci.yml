@@ -6,12 +6,16 @@ on:
       - main
     paths-ignore:
       - '**.md'
+      - 'man/**'
+      - 'debian/**'
       - 'renovate.json'
       - 'LICENSE'
       - '.gitignore'
   pull_request:
     paths-ignore:
       - '**.md'
+      - 'man/**'
+      - 'debian/**'
       - 'renovate.json'
       - 'LICENSE'
       - '.gitignore'
