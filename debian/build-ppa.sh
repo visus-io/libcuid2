@@ -7,6 +7,7 @@ REVISION="1ubuntu1"
 RELEASES=("noble" "jammy" "focal")
 BUILD_AREA="../build-area"
 GPG_KEY="${GPG_KEY:-}"
+PPA_NAME=""
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -117,10 +118,17 @@ show_summary() {
         echo ""
     fi
 
-    info "To upload to PPA:"
-    echo "  dput ppa:<your-ppa-name> ${BUILD_AREA}/${PACKAGE_NAME}_*~noble1_source.changes"
-    echo "  dput ppa:<your-ppa-name> ${BUILD_AREA}/${PACKAGE_NAME}_*~jammy1_source.changes"
-    echo "  dput ppa:<your-ppa-name> ${BUILD_AREA}/${PACKAGE_NAME}_*~focal1_source.changes"
+    if [ -n "$PPA_NAME" ]; then
+        info "To upload to PPA:"
+        echo "  dput ppa:${PPA_NAME} ${BUILD_AREA}/${PACKAGE_NAME}_*~noble1_source.changes"
+        echo "  dput ppa:${PPA_NAME} ${BUILD_AREA}/${PACKAGE_NAME}_*~jammy1_source.changes"
+        echo "  dput ppa:${PPA_NAME} ${BUILD_AREA}/${PACKAGE_NAME}_*~focal1_source.changes"
+    else
+        info "To upload to PPA (specify with -p option):"
+        echo "  dput ppa:<your-ppa-name> ${BUILD_AREA}/${PACKAGE_NAME}_*~noble1_source.changes"
+        echo "  dput ppa:<your-ppa-name> ${BUILD_AREA}/${PACKAGE_NAME}_*~jammy1_source.changes"
+        echo "  dput ppa:<your-ppa-name> ${BUILD_AREA}/${PACKAGE_NAME}_*~focal1_source.changes"
+    fi
 }
 
 main() {
@@ -132,11 +140,16 @@ main() {
                 GPG_KEY="$2"
                 shift 2
                 ;;
+            -p|--ppa)
+                PPA_NAME="$2"
+                shift 2
+                ;;
             -h|--help)
-                echo "Usage: $0 [-k GPG_KEY] [-h]"
+                echo "Usage: $0 [-k GPG_KEY] [-p PPA_NAME] [-h]"
                 echo ""
                 echo "Options:"
                 echo "  -k, --key GPG_KEY    GPG key ID for signing packages"
+                echo "  -p, --ppa PPA_NAME   PPA name (e.g., username/ppa-name)"
                 echo "  -h, --help           Show this help message"
                 exit 0
                 ;;
