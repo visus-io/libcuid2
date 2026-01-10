@@ -4,7 +4,7 @@ set -e
 PACKAGE_NAME="libcuid2"
 VERSION="1.0.0"
 REVISION="1ubuntu1"
-RELEASES=("noble" "jammy" "focal")
+RELEASES=("noble" "jammy")
 BUILD_AREA="../build-area"
 GPG_KEY="${GPG_KEY:-}"
 PPA_NAME=""
@@ -87,6 +87,14 @@ build_for_release() {
     cp -r debian "$work_dir/"
     cd "$work_dir"
 
+    # Update changelog with release-specific version at the top
+    info "Updating changelog for ${release}..."
+    DEBFULLNAME="Visus Development Team" \
+    DEBEMAIL="admin@projects.visus.io" \
+    dch --force-distribution --distribution "${release}" \
+        --newversion "${release_version}" \
+        "Rebuild for Ubuntu ${release}"
+
     info "Running debuild for ${release}..."
 
     if [ -n "$GPG_KEY" ]; then
@@ -122,12 +130,10 @@ show_summary() {
         info "To upload to PPA:"
         echo "  dput ppa:${PPA_NAME} ${BUILD_AREA}/${PACKAGE_NAME}_*~noble1_source.changes"
         echo "  dput ppa:${PPA_NAME} ${BUILD_AREA}/${PACKAGE_NAME}_*~jammy1_source.changes"
-        echo "  dput ppa:${PPA_NAME} ${BUILD_AREA}/${PACKAGE_NAME}_*~focal1_source.changes"
     else
         info "To upload to PPA (specify with -p option):"
         echo "  dput ppa:<your-ppa-name> ${BUILD_AREA}/${PACKAGE_NAME}_*~noble1_source.changes"
         echo "  dput ppa:<your-ppa-name> ${BUILD_AREA}/${PACKAGE_NAME}_*~jammy1_source.changes"
-        echo "  dput ppa:<your-ppa-name> ${BUILD_AREA}/${PACKAGE_NAME}_*~focal1_source.changes"
     fi
 }
 
