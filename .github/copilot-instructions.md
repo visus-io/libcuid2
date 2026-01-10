@@ -302,7 +302,6 @@ std::array<uint8_t, 8> serialize_int64_le(int64_t value) {
 
 ## Additional Resources
 
-- **CLAUDE.md** - Comprehensive project documentation for Claude Code
 - **README.md** - Public-facing documentation and usage examples
 - **man/** - Unix manual pages (CLI tool, API reference, architecture)
 - **debian/README.md** - Debian packaging documentation
