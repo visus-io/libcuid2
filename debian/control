@@ -3,7 +3,7 @@ Section: libs
 Priority: optional
 Maintainer: Visus Development Team <admin@projects.visus.io>
 Build-Depends: debhelper-compat (= 13),
-               cmake (>= 4.0),
+               cmake (>= 3.22),
                pkg-config,
                libssl-dev (>= 3.0),
                libboost-dev (>= 1.74),

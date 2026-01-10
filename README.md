@@ -14,7 +14,7 @@ A high-performance C++ implementation of the [Cuid2](https://github.com/parallel
   - [Features](#features)
   - [Quick Start](#quick-start)
   - [Installation](#installation)
-    - [CMake 4 Installation](#cmake-4-installation)
+    - [CMake Installation](#cmake-installation)
       - [Checking Your CMake Version](#checking-your-cmake-version)
       - [Ubuntu/Debian](#ubuntudebian)
       - [Fedora/RHEL](#fedorarhel)
@@ -96,9 +96,9 @@ int main() {
 
 ## Installation
 
-### CMake 4 Installation
+### CMake Installation
 
-This project requires **CMake 4.0+**. Many Linux distributions currently ship with CMake 3.x by default, so you may need to install CMake 4 manually.
+This project requires **CMake 3.22+**. Most modern Linux distributions ship with CMake 3.22 or newer by default.
 
 #### Checking Your CMake Version
 ```bash
@@ -107,98 +107,49 @@ cmake --version
 
 #### Ubuntu/Debian
 
-Ubuntu 24.04 LTS and earlier Debian versions ship with CMake 3.x. You have two options:
-
-**Option 1: Install from Kitware APT Repository (Recommended)**
 ```bash
-# Remove old CMake if installed
-sudo apt-get remove --purge cmake
-
-# Install dependencies
 sudo apt-get update
-sudo apt-get install -y software-properties-common lsb-release wget gnupg
+sudo apt-get install cmake
+```
 
+Ubuntu 22.04 LTS and later include CMake 3.22+. For older versions, use the Kitware APT repository:
+
+```bash
 # Add Kitware APT repository
 wget -O - https://apt.kitware.com/keys/kitware-archive-latest.asc 2>/dev/null | gpg --dearmor - | sudo tee /etc/apt/trusted.gpg.d/kitware.gpg >/dev/null
 sudo apt-add-repository "deb https://apt.kitware.com/ubuntu/ $(lsb_release -cs) main"
-
-# Install CMake 4
 sudo apt-get update
 sudo apt-get install cmake
-
-# Verify installation
-cmake --version
-```
-
-**Option 2: Build from Source**
-```bash
-# Install build dependencies
-sudo apt-get install -y build-essential libssl-dev
-
-# Download and build CMake 4 (adjust version as needed)
-wget https://github.com/Kitware/CMake/releases/download/v4.0.0/cmake-4.0.0.tar.gz
-tar -xzf cmake-4.0.0.tar.gz
-cd cmake-4.0.0
-./bootstrap --prefix=/usr/local
-make -j$(nproc)
-sudo make install
-
-# Verify installation
-cmake --version
 ```
 
 #### Fedora/RHEL
 
-Fedora 41+ includes CMake 4.x. For older versions:
 ```bash
-# Fedora 41+
 sudo dnf install cmake
-
-# For older Fedora/RHEL, build from source (see Ubuntu Option 2 above)
-# Replace apt-get with dnf/yum for build dependencies:
-sudo dnf install -y gcc-c++ make openssl-devel
 ```
 
 #### Arch Linux
 ```bash
-# Arch typically has latest CMake in official repos
 sudo pacman -S cmake
 ```
 
 #### macOS
 ```bash
-# Homebrew
 brew install cmake
-
-# Verify installation
-cmake --version
 ```
 
 #### FreeBSD
 ```bash
-# CMake 4 may be available in ports/packages
 pkg install cmake
-
-# If not available, build from ports:
-cd /usr/ports/devel/cmake && make install clean
 ```
 
 #### OpenBSD/NetBSD
 ```bash
-# Check available version
-pkg_info -Q cmake  # OpenBSD
-pkgin search cmake # NetBSD
-
-# Install if CMake 4 is available
 pkg_add cmake      # OpenBSD
 pkgin install cmake # NetBSD
-
-# Otherwise, build from source (see Ubuntu Option 2 above)
 ```
 
 #### Windows
-
-CMake 4 is available via the official installer:
 
 **Option 1: Official Installer**
 - Download from https://cmake.org/download/
@@ -306,11 +257,11 @@ cmake --preset freebsd-arm64-debug
 
 ### Debian/Ubuntu Packages
 
-**Note:** Building DEB packages requires CMake 4.0+. See [CMake 4 Installation](#cmake-4-installation) above if you don't have it installed.
+**Note:** Building DEB packages requires CMake 3.22+. See [CMake Installation](#cmake-installation) above if you don't have it installed.
 
 Build DEB packages:
 ```bash
-# Install build dependencies (assuming CMake 4 is already installed)
+# Install build dependencies
 sudo apt-get install debhelper-compat pkg-config \
     libssl-dev libboost-dev libfmt-dev
 
@@ -487,7 +438,7 @@ ctest --preset macos-arm64-debug
 ## Requirements
 
 - **C++20** compiler (GCC 10+, Clang 11+, MSVC 2019+)
-- **CMake** 4.0+
+- **CMake** 3.22+
 - **OpenSSL** 3.x (NIST FIPS-202 SHA3-512, CSPRNG)
 - **Boost** (Endian, Multiprecision, Nowide, Test)
 - **fmt** (Modern formatting library)

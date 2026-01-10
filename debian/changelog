@@ -19,14 +19,3 @@ libcuid2 (1.0.0-1ubuntu1~jammy1) jammy; urgency=medium
   * Cross-platform support (Linux, BSD, macOS, Windows)
 
  -- Visus Development Team <admin@projects.visus.io>  Sun, 28 Dec 2025 12:00:00 +0000
-
-libcuid2 (1.0.0-1ubuntu1~focal1) focal; urgency=medium
-
-  * Initial release for Ubuntu 20.04 LTS (Focal Fossa)
-  * C++ implementation of Cuid2 identifier generation
-  * Thread-safe collision-resistant unique identifiers
-  * SHA3-512 cryptographic hashing (NIST FIPS-202)
-  * Configurable length (4-32 characters, default 24)
-  * Cross-platform support (Linux, BSD, macOS, Windows)
-
- -- Visus Development Team <admin@projects.visus.io>  Sun, 28 Dec 2025 12:00:00 +0000

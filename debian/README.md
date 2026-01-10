@@ -97,7 +97,7 @@ sudo chroot /tmp/debian-test
 ### Build Dependencies
 
 - **debhelper-compat (= 13)** - Debian build helper tools
-- **cmake (>= 4.0)** - Build system
+- **cmake (>= 3.22)** - Build system
 - **pkg-config** - Dependency detection
 - **libssl-dev (>= 3.0)** - OpenSSL development files (SHA3-512, CSPRNG)
 - **libboost-dev (>= 1.74)** - Boost libraries (header-only components)
@@ -216,7 +216,6 @@ Source packages are pre-configured for the following Ubuntu LTS releases:
 
 - **Ubuntu 24.04 LTS (Noble Numbat)** - Version suffix: `~noble1`
 - **Ubuntu 22.04 LTS (Jammy Jellyfish)** - Version suffix: `~jammy1`
-- **Ubuntu 20.04 LTS (Focal Fossa)** - Version suffix: `~focal1`
 
 ### PPA Prerequisites
 
@@ -259,7 +258,7 @@ cd /path/to/libcuid2
 
 The script will:
 1. Create the orig tarball from git
-2. Build source packages for Noble, Jammy, and Focal
+2. Build source packages for Noble and Jammy
 3. Place all files in `../build-area/`
 
 #### Manual Build Process
@@ -281,9 +280,6 @@ For additional releases, update debian/changelog and rebuild:
 
 ```bash
 # Build for Jammy
-debuild -S -sa -k<YOUR_GPG_KEY_ID>
-
-# Build for Focal
 debuild -S -sa -k<YOUR_GPG_KEY_ID>
 ```
 
@@ -311,7 +307,6 @@ EOF
 # Upload to your PPA (replace with your PPA name)
 dput ppa:YOUR_LAUNCHPAD_USERNAME/libcuid2 ../build-area/libcuid2_*~noble1_source.changes
 dput ppa:YOUR_LAUNCHPAD_USERNAME/libcuid2 ../build-area/libcuid2_*~jammy1_source.changes
-dput ppa:YOUR_LAUNCHPAD_USERNAME/libcuid2 ../build-area/libcuid2_*~focal1_source.changes
 ```
 
 Launchpad will automatically:
@@ -359,12 +354,10 @@ sudo apt-get install pbuilder ubuntu-dev-tools
 # Create base environments
 pbuilder-dist noble create
 pbuilder-dist jammy create
-pbuilder-dist focal create
 
 # Test build
 pbuilder-dist noble build ../build-area/libcuid2_*~noble1.dsc
 pbuilder-dist jammy build ../build-area/libcuid2_*~jammy1.dsc
-pbuilder-dist focal build ../build-area/libcuid2_*~focal1.dsc
 ```
 
 ### Version Management for PPAs
