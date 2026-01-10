@@ -7,7 +7,8 @@ Build-Depends: debhelper-compat (= 13),
                pkg-config,
                libssl-dev (>= 3.0),
                libboost-dev (>= 1.74),
-               libfmt-dev (>= 9.0)
+               libboost-test-dev (>= 1.74),
+               libfmt-dev (>= 8.1)
 Standards-Version: 4.6.2
 Homepage: https://github.com/visus-io/libcuid2
 Vcs-Git: https://github.com/visus-io/libcuid2.git

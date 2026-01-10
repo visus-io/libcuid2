@@ -2,8 +2,8 @@
 set -e
 
 PACKAGE_NAME="libcuid2"
-VERSION="1.0.0"
-REVISION="1ubuntu1"
+VERSION="1.0.1"
+REVISION="1ubuntu4"
 RELEASES=("noble" "jammy")
 BUILD_AREA="../build-area"
 GPG_KEY="${GPG_KEY:-}"

@@ -1,21 +1,10 @@
-libcuid2 (1.0.0-1ubuntu1~noble1) noble; urgency=medium
+libcuid2 (1.0.1-1) UNRELEASED; urgency=medium
 
-  * Initial release for Ubuntu 24.04 LTS (Noble Numbat)
+  * New upstream release
   * C++ implementation of Cuid2 identifier generation
   * Thread-safe collision-resistant unique identifiers
   * SHA3-512 cryptographic hashing (NIST FIPS-202)
   * Configurable length (4-32 characters, default 24)
   * Cross-platform support (Linux, BSD, macOS, Windows)
 
- -- Visus Development Team <admin@projects.visus.io>  Sun, 28 Dec 2025 12:00:00 +0000
-
-libcuid2 (1.0.0-1ubuntu1~jammy1) jammy; urgency=medium
-
-  * Initial release for Ubuntu 22.04 LTS (Jammy Jellyfish)
-  * C++ implementation of Cuid2 identifier generation
-  * Thread-safe collision-resistant unique identifiers
-  * SHA3-512 cryptographic hashing (NIST FIPS-202)
-  * Configurable length (4-32 characters, default 24)
-  * Cross-platform support (Linux, BSD, macOS, Windows)
-
- -- Visus Development Team <admin@projects.visus.io>  Sun, 28 Dec 2025 12:00:00 +0000
+ -- Visus Development Team <admin@projects.visus.io>  Fri, 10 Jan 2026 13:35:00 +0000
