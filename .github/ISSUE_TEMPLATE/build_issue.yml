@@ -1,0 +1,177 @@
+name: Build/Installation Issue
+description: Report problems building or installing libcuid2
+title: "[Build]: "
+labels: ["build", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Having trouble building or installing libcuid2? Please provide the details below.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Issue Description
+      description: Describe the build or installation problem you're experiencing
+      placeholder: Describe the issue...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: build-stage
+    attributes:
+      label: Build Stage
+      description: At what stage does the issue occur?
+      options:
+        - CMake Configuration
+        - Dependency Installation (vcpkg)
+        - Compilation
+        - Linking
+        - Installation (make install)
+        - Package Installation (DEB/RPM)
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Platform
+      description: Which platform are you building on?
+      options:
+        - macOS (Apple Silicon / ARM64)
+        - macOS (Intel / x86_64)
+        - Linux (x86_64)
+        - Linux (ARM64)
+        - FreeBSD (x86_64)
+        - FreeBSD (ARM64)
+        - OpenBSD (x86_64)
+        - OpenBSD (ARM64)
+        - NetBSD (x86_64)
+        - NetBSD (ARM64)
+        - Windows (x64)
+        - Windows (ARM64)
+    validations:
+      required: true
+
+  - type: input
+    id: os-version
+    attributes:
+      label: OS Version
+      description: What version of the operating system?
+      placeholder: e.g., macOS 14.2, Ubuntu 22.04, Windows 11
+    validations:
+      required: true
+
+  - type: input
+    id: compiler
+    attributes:
+      label: Compiler & Version
+      description: Which compiler are you using?
+      placeholder: e.g., Clang 15.0, GCC 12.2, MSVC 19.35, MinGW64 13.1
+    validations:
+      required: true
+
+  - type: input
+    id: cmake-version
+    attributes:
+      label: CMake Version
+      description: What version of CMake?
+      placeholder: e.g., 3.28.1
+    validations:
+      required: true
+
+  - type: textarea
+    id: build-commands
+    attributes:
+      label: Build Commands
+      description: What commands did you run?
+      render: shell
+      placeholder: |
+        cmake -B build-macos-arm64-debug -DCMAKE_BUILD_TYPE=Debug
+        cmake --build build-macos-arm64-debug
+    validations:
+      required: true
+
+  - type: textarea
+    id: error-output
+    attributes:
+      label: Error Output
+      description: Paste the complete error output
+      render: shell
+      placeholder: Paste error output here...
+    validations:
+      required: true
+
+  - type: textarea
+    id: cmake-output
+    attributes:
+      label: CMake Configuration Output
+      description: Paste the output from CMake configuration (if applicable)
+      render: shell
+      placeholder: Paste CMake output here...
+
+  - type: dropdown
+    id: dependencies
+    attributes:
+      label: System Dependencies
+      description: Have you installed system dependencies as documented?
+      options:
+        - "Yes - Followed platform-specific instructions"
+        - "No - Used vcpkg only"
+        - "Unsure"
+        - "Not applicable (Windows)"
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependency-versions
+    attributes:
+      label: Dependency Versions
+      description: What versions of system dependencies do you have installed?
+      placeholder: |
+        OpenSSL: 3.2.0
+        Boost: 1.83.0
+        fmt: 10.1.1
+      render: shell
+
+  - type: dropdown
+    id: build-preset
+    attributes:
+      label: Using CMake Presets?
+      description: Are you using CMake presets or manual configuration?
+      options:
+        - CMake Presets
+        - Manual Configuration
+    validations:
+      required: true
+
+  - type: textarea
+    id: cmake-cache
+    attributes:
+      label: CMake Cache (if relevant)
+      description: Output of `cmake -LA -N <build-dir>` may help diagnose issues
+      render: shell
+      placeholder: Paste CMake cache variables here...
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other relevant information (environment variables, custom toolchains, etc.)
+      placeholder: Any additional information...
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please verify the following
+      options:
+        - label: I have reviewed the build instructions in CLAUDE.md
+          required: true
+        - label: I have installed platform-specific system dependencies (non-Windows)
+          required: false
+        - label: I have verified my CMake version is 3.22 or newer
+          required: true
+        - label: I have searched existing issues for similar build problems
+          required: true

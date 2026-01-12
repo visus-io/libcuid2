@@ -12,6 +12,7 @@ on:
       - 'LICENSE'
       - '.gitignore'
       - '.github/workflows/lint_pullrequest.yml'
+      - '.github/ISSUE_TEMPLATE/**'
   pull_request:
     paths-ignore:
       - '**.md'
@@ -21,6 +22,7 @@ on:
       - 'LICENSE'
       - '.gitignore'
       - '.github/workflows/lint_pullrequest.yml'
+      - '.github/ISSUE_TEMPLATE/**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

@@ -1,0 +1,137 @@
+name: Documentation Issue
+description: Report issues or suggest improvements to documentation
+title: "[Docs]: "
+labels: ["documentation", "needs-triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help us improve libcuid2 documentation! This includes code comments, manual pages, README files, and inline documentation.
+
+  - type: dropdown
+    id: doc-type
+    attributes:
+      label: Documentation Type
+      description: Which type of documentation is affected?
+      multiple: true
+      options:
+        - README.md
+        - CLAUDE.md (Build/Development Guide)
+        - Manual Pages (man pages)
+        - API Documentation (Headers/Doxygen)
+        - Code Comments
+        - Localization/Translations
+        - CMake Documentation
+        - Examples
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: issue-type
+    attributes:
+      label: Issue Type
+      description: What kind of documentation issue is this?
+      options:
+        - Incorrect Information
+        - Missing Information
+        - Unclear/Confusing
+        - Typo/Grammar
+        - Outdated
+        - Enhancement/Addition
+        - Translation Issue
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: location
+    attributes:
+      label: Location
+      description: Where is the documentation issue located?
+      placeholder: |
+        File: include/cuid2/cuid2.hpp
+        Section: "Usage Examples"
+        Line: 42
+    validations:
+      required: true
+
+  - type: textarea
+    id: current
+    attributes:
+      label: Current Documentation
+      description: Quote the current documentation or describe what exists now
+      placeholder: |
+        Currently says: "..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: issue
+    attributes:
+      label: Problem Description
+      description: What is wrong or missing?
+      placeholder: Explain the issue...
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggested
+    attributes:
+      label: Suggested Improvement
+      description: How should it be changed or what should be added?
+      placeholder: |
+        Should say: "..."
+        Or add section about: "..."
+    validations:
+      required: true
+
+  - type: dropdown
+    id: language
+    attributes:
+      label: Language (for translations)
+      description: If this is a translation issue, which language?
+      options:
+        - English (default)
+        - German (de)
+        - Spanish (es)
+        - French (fr)
+        - Italian (it)
+        - Japanese (ja)
+        - Korean (ko)
+        - Polish (pl)
+        - Portuguese - European (pt)
+        - Portuguese - Brazilian (pt_BR)
+        - Russian (ru)
+        - Chinese - Simplified (zh_CN)
+        - Not applicable
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Any other relevant information or examples
+      placeholder: Any additional information...
+
+  - type: dropdown
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Would you like to submit a pull request to fix this?
+      options:
+        - "Yes - I will submit a PR"
+        - "Maybe - With guidance"
+        - "No - Reporting only"
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please verify the following
+      options:
+        - label: I have checked the latest version of the documentation
+          required: true
+        - label: I have searched existing documentation issues
+          required: true
