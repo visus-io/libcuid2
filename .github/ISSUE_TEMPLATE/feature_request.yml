@@ -1,0 +1,127 @@
+name: Feature Request
+description: Suggest a new feature or enhancement for libcuid2
+title: "[Feature]: "
+labels: ["Issue: Pending Confirmation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for suggesting a feature! Please note that libcuid2 is **feature complete** as a Cuid2 implementation. New features should align with the Cuid2 specification or significantly improve the library's usability.
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem Statement
+      description: Is your feature request related to a problem? Please describe.
+      placeholder: I'm frustrated when...
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: Describe the solution you'd like to see
+      placeholder: I would like to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives Considered
+      description: Have you considered any alternative solutions or workarounds?
+      placeholder: I've tried...
+
+  - type: dropdown
+    id: feature-type
+    attributes:
+      label: Feature Type
+      description: What type of feature is this?
+      options:
+        - API Enhancement
+        - Performance Improvement
+        - Build System Enhancement
+        - Platform Support
+        - Documentation
+        - Testing/Quality
+        - Tooling
+        - Other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: breaking-change
+    attributes:
+      label: Breaking Change
+      description: Would this feature require breaking changes to the API?
+      options:
+        - "No - Backward compatible"
+        - "Yes - Breaking change"
+        - "Unsure"
+    validations:
+      required: true
+
+  - type: textarea
+    id: use-cases
+    attributes:
+      label: Use Cases
+      description: Describe specific use cases where this feature would be valuable
+      placeholder: |
+        1. When building...
+        2. When integrating with...
+        3. When deploying to...
+    validations:
+      required: true
+
+  - type: textarea
+    id: implementation
+    attributes:
+      label: Implementation Details
+      description: If you have ideas about how to implement this, please share
+      placeholder: This could be implemented by...
+
+  - type: textarea
+    id: code-example
+    attributes:
+      label: Example Usage
+      description: Show how you envision using this feature
+      render: cpp
+      placeholder: |
+        #include <cuid2/cuid2.hpp>
+
+        int main() {
+            // Example of proposed feature usage
+        }
+
+  - type: dropdown
+    id: contribution
+    attributes:
+      label: Contribution
+      description: Are you willing to contribute this feature?
+      options:
+        - "Yes - I can implement this"
+        - "Maybe - With guidance"
+        - "No - Suggestion only"
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: Add any other context, screenshots, or examples
+      placeholder: Any additional information...
+
+  - type: checkboxes
+    id: checklist
+    attributes:
+      label: Pre-submission Checklist
+      description: Please verify the following before submitting
+      options:
+        - label: I have searched existing issues and discussions to ensure this hasn't been requested
+          required: true
+        - label: This feature aligns with the Cuid2 specification or library usability goals
+          required: true
+        - label: I have provided clear use cases for this feature
+          required: true

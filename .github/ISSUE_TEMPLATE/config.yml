@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Security Vulnerability
+    url: https://github.com/visus-io/libcuid2/security/advisories/new
+    about: Please report security vulnerabilities through GitHub Security Advisories (not public issues)
+  - name: Discussions
+    url: https://github.com/visus-io/libcuid2/discussions
+    about: For general discussions, ideas, or community support
+  - name: Code of Conduct
+    url: https://github.com/visus-io/libcuid2/blob/main/CODE_OF_CONDUCT.md
+    about: Review our community guidelines (Contributor Covenant 3.0)
