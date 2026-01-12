@@ -1,7 +1,7 @@
 name: Documentation Issue
 description: Report issues or suggest improvements to documentation
 title: "[Docs]: "
-labels: ["documentation", "needs-triage"]
+labels: ["Issue: Pending Confirmation"]
 body:
   - type: markdown
     attributes:

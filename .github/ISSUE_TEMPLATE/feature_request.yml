@@ -1,7 +1,7 @@
 name: Feature Request
 description: Suggest a new feature or enhancement for libcuid2
 title: "[Feature]: "
-labels: ["enhancement", "needs-triage"]
+labels: ["Issue: Pending Confirmation"]
 body:
   - type: markdown
     attributes:

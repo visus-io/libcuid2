@@ -1,7 +1,7 @@
 name: Build/Installation Issue
 description: Report problems building or installing libcuid2
 title: "[Build]: "
-labels: ["build", "needs-triage"]
+labels: ["Issue: Pending Confirmation"]
 body:
   - type: markdown
     attributes:
