@@ -257,6 +257,28 @@ cmake --preset freebsd-arm64-debug
 
 ### Debian/Ubuntu Packages
 
+#### Installing from PPA (Recommended)
+
+The easiest way to install libcuid2 on Ubuntu is via the official PPA:
+
+```bash
+# Add the PPA
+sudo add-apt-repository ppa:xaevik/libcuid2
+sudo apt-get update
+
+# Install packages
+sudo apt-get install libcuid2-0 libcuid2-dev cuid2gen
+```
+
+Available packages:
+- `libcuid2-0` - Runtime shared library
+- `libcuid2-dev` - Development headers and CMake config
+- `cuid2gen` - Command-line tool
+
+PPA homepage: https://launchpad.net/~xaevik/+archive/ubuntu/libcuid2
+
+#### Building DEB Packages from Source
+
 **Note:** Building DEB packages requires CMake 3.22+. See [CMake Installation](#cmake-installation) above if you don't have it installed.
 
 Build DEB packages:
@@ -271,11 +293,6 @@ dpkg-buildpackage -us -uc -b
 # Install packages
 sudo dpkg -i ../libcuid2-0_*.deb ../libcuid2-dev_*.deb ../cuid2gen_*.deb
 ```
-
-Three packages are built:
-- `libcuid2-0` - Runtime shared library
-- `libcuid2-dev` - Development headers and CMake config
-- `cuid2gen` - Command-line tool
 
 ## Usage
 
