@@ -265,7 +265,8 @@
         "rhs": "FreeBSD"
       },
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "x64-freebsd-dynamic"
       }
     },
     {
@@ -280,7 +281,8 @@
         "rhs": "FreeBSD"
       },
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "x64-freebsd-dynamic"
       }
     },
     {
@@ -299,7 +301,8 @@
         "strategy": "external"
       },
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "arm64-freebsd-dynamic"
       }
     },
     {
@@ -318,7 +321,8 @@
         "strategy": "external"
       },
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "arm64-freebsd-dynamic"
       }
     },
     {
@@ -333,7 +337,8 @@
         "rhs": "OpenBSD"
       },
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "x64-openbsd-dynamic"
       }
     },
     {
@@ -348,7 +353,8 @@
         "rhs": "OpenBSD"
       },
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "x64-openbsd-dynamic"
       }
     },
     {
@@ -367,7 +373,8 @@
         "strategy": "external"
       },
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "arm64-openbsd-dynamic"
       }
     },
     {
@@ -386,7 +393,8 @@
         "strategy": "external"
       },
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "arm64-openbsd-dynamic"
       }
     },
     {
@@ -401,7 +409,8 @@
         "rhs": "NetBSD"
       },
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "x64-netbsd-dynamic"
       }
     },
     {
@@ -416,7 +425,8 @@
         "rhs": "NetBSD"
       },
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "x64-netbsd-dynamic"
       }
     },
     {
@@ -435,7 +445,8 @@
         "strategy": "external"
       },
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug"
+        "CMAKE_BUILD_TYPE": "Debug",
+        "VCPKG_TARGET_TRIPLET": "arm64-netbsd-dynamic"
       }
     },
     {
@@ -454,7 +465,8 @@
         "strategy": "external"
       },
       "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
+        "CMAKE_BUILD_TYPE": "Release",
+        "VCPKG_TARGET_TRIPLET": "arm64-netbsd-dynamic"
       }
     }
   ],

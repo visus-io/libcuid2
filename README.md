@@ -34,6 +34,7 @@ A high-performance C++ implementation of the [Cuid2](https://github.com/parallel
     - [Build from Source](#build-from-source)
       - [CMake Presets](#cmake-presets)
     - [Debian/Ubuntu Packages](#debianubuntu-packages)
+    - [Fedora/RHEL Packages](#fedorarhel-packages)
   - [Usage](#usage)
     - [Command-Line Tool](#command-line-tool)
     - [Library API](#library-api)
@@ -294,6 +295,47 @@ dpkg-buildpackage -us -uc -b
 sudo dpkg -i ../libcuid2-0_*.deb ../libcuid2-dev_*.deb ../cuid2gen_*.deb
 ```
 
+### Fedora/RHEL Packages
+
+#### Building RPM Packages from Source
+
+**Note:** Building RPM packages requires CMake 3.22+ and a C++20 compiler. RHEL 8 requires GCC Toolset 12.
+
+Build RPM packages:
+```bash
+# Fedora / RHEL 9+
+sudo dnf install rpm-build rpmdevtools gcc-c++ cmake \
+    openssl-devel boost-devel fmt-devel
+
+# RHEL 8 (requires EPEL and GCC Toolset)
+sudo dnf install epel-release
+sudo dnf install gcc-toolset-12-gcc-c++ cmake3 rpm-build rpmdevtools \
+    openssl3-devel boost-devel fmt-devel
+
+# Set up RPM build environment
+rpmdev-setuptree
+
+# Copy spec file and create source tarball
+cp rpm/libcuid2.spec ~/rpmbuild/SPECS/
+git archive --format=tar.gz --prefix=libcuid2-1.0.1/ \
+    -o ~/rpmbuild/SOURCES/libcuid2-1.0.1.tar.gz HEAD
+
+# Build packages
+rpmbuild -ba ~/rpmbuild/SPECS/libcuid2.spec
+
+# Install packages
+sudo dnf install ~/rpmbuild/RPMS/*/libcuid2-1.0.1-1.*.rpm \
+    ~/rpmbuild/RPMS/*/libcuid2-devel-1.0.1-1.*.rpm \
+    ~/rpmbuild/RPMS/*/cuid2gen-1.0.1-1.*.rpm
+```
+
+Available packages:
+- `libcuid2` - Runtime shared library
+- `libcuid2-devel` - Development headers and CMake config
+- `cuid2gen` - Command-line tool
+
+For detailed RPM packaging documentation including mock builds and Copr cloud builds, see [rpm/README.md](rpm/README.md).
+
 ## Usage
 
 ### Command-Line Tool
@@ -506,6 +548,7 @@ Contributions welcome! Please follow these guidelines:
 ## Additional Documentation
 
 - [debian/README.md](debian/README.md) - Debian packaging documentation
+- [rpm/README.md](rpm/README.md) - RPM packaging documentation
 - [man/README.md](man/README.md) - Manual pages overview
 - [man/LOCALIZATION.md](man/LOCALIZATION.md) - Translation guidelines
 - [cmake/vcpkg/ports/README.md](cmake/vcpkg/ports/README.md) - vcpkg overlay ports information

@@ -1,7 +1,7 @@
 {
   "$schema": "https://raw.githubusercontent.com/microsoft/vcpkg-tool/main/docs/vcpkg.schema.json",
   "name": "libcuid2",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "C++ implementation of Cuid2 - collision-resistant unique identifiers",
   "homepage": "https://github.com/visus-io/libcuid2",
   "license": "MIT",
