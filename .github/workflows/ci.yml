@@ -51,7 +51,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup build tools
-        uses: lukka/get-cmake@ea83089aa35e08e459464341fe24ad024ee2466f # v4.3.1
+        uses: lukka/get-cmake@7bfc9baacbbdcb5e37957ad05c3546b3e222be3c # v4.3.2
         with:
           cmakeVersion: '~3.28.0'
           ninjaVersion: '^1.12.0'
@@ -69,7 +69,7 @@ jobs:
           pip3 install gcovr==8.4
 
       - name: Setup vcpkg
-        uses: lukka/run-vcpkg@5e0cab206a5ea620130caf672fce3e4a6b5666a1 # v11.5
+        uses: lukka/run-vcpkg@b1a0dd252f06b9e25b3c022a9a03bd7a427fb6a2 # v11.6
 
       - name: Setup MSVC (Windows)
         if: runner.os == 'Windows'
