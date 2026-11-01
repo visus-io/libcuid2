@@ -51,7 +51,7 @@ jobs:
           fetch-depth: 0
 
       - name: Setup build tools
-        uses: lukka/get-cmake@a89e43e22a96abafcd7a62db652a65ecd33052c9 # v4.4.4
+        uses: lukka/get-cmake@f86dd60acae0d132056913e248bdabf0e0580b7a # v4.4.5
         with:
           cmakeVersion: '~3.28.0'
           ninjaVersion: '^1.12.0'
@@ -165,7 +165,7 @@ jobs:
           path: build/
 
       - name: Analyze
-        uses: SonarSource/sonarqube-scan-action@d209202bc7d53ff1cc128f7f907dac145c9d6ae9 # v8.3.0
+        uses: SonarSource/sonarqube-scan-action@4d1dc0c91ee400dcf8a6dddf2f705ac36542e304 # v8.4.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
